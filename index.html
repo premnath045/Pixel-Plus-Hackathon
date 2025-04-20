@@ -1,0 +1,4320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KAYAK - Compare flights, hotels, and car rentals</title>
+  <!-- <link rel="stylesheet" href="styles.css"> -->
+<style>
+@import url('https://fonts.cdnfonts.com/css/tt-hoves-pro-trial');
+    /* root variables */
+:root {
+    --primary-color: #007799;
+    --secondary-color: #ff690f;
+    --text-color: #192024;
+    --background-color: #fff;
+    --primary-font: 'TT Hoves Pro Trial Variable', sans-serif;
+} 
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* font-family: "TT Hoves Variable", -apple-system, Roboto, Helvetica, sans-serif; */
+    font-family: var(--primary-font);
+  }
+
+  body {
+    background-color: #fff;
+  }
+
+  input {
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+
+  input:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+ }
+
+ @keyframes moveDown {
+    from {
+        transform: translateY(-36px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes moveUp {
+    from {
+        transform: translateY(36px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+  
+  .kayak-desktop {
+    background-color: #fff;
+    width: 100%;
+  }
+
+
+/* Sidebar navigation container */
+.sidebar-nav {
+    position: fixed;
+    top: 0;
+    left: -320px; /* Start off-screen */
+    width: 250px;
+    height: 100vh;
+    background-color: #fff;
+    z-index: 10000;
+    overflow-y: auto;
+    transition: left 0.3s ease;
+    padding-top: 80px;
+}
+
+.sidebar-nav.active {
+    left: 0;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Prevent body scroll when sidebar is open */
+body.sidebar-open {
+    overflow: hidden;
+}
+
+
+  /* Menu item styles */
+  .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 2px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 90%;
+  }
+
+  .icon-container {
+    display: flex;
+    width: 46px;
+    height: 36px;
+    padding: 0 16px 0 8px;
+    align-items: center;
+  }
+
+  .menu-text {
+    font-size: 14px;
+    color: rgba(25, 32, 36, 1);
+    font-weight: 400;
+    flex: 1;
+  }
+
+  /* Divider styles */
+  .divider {
+    height: 0.8px;
+    border-bottom: 0.8px solid #d9e2e8;
+    margin: 8px 0;
+  }
+
+  /* Badge styles */
+  .badge {
+    padding: 1px 4px;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 11px;
+    margin-left: 6px;
+    background-color: #363f45;
+  }
+
+  /* Currency symbol style */
+  .currency-symbol {
+    font-family: "TT Hoves", sans-serif;
+    font-size: 12px;
+    color: #8796a1;
+    font-weight: 700;
+    width: 36px;
+    height: 36px;
+    padding: 8px;
+  }
+
+  /* Flag container */
+  .flag-container {
+    width: 18px;
+    height: 12px;
+  }
+
+  /* Icon SVG styles */
+  .icon-svg {
+    height: 36px;
+    width: 36px;
+  }
+
+  /* Active item styles */
+  .active-item .icon-svg path {
+    fill: black;
+  }
+
+  /* Responsive styles */
+  @media (max-width: 991px) {
+    .sidebar-nav {
+      width: 200px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .sidebar-nav {
+      width: 100px;
+    }
+
+    .icon-container {
+      justify-content: center;
+    }
+
+    .menu-text,
+    .badge {
+      display: none;
+    }
+  }
+
+  
+  /* Header Styles */
+  .main-header {
+    position: relative;
+    width: 100%;
+    z-index: 999999;
+  }
+  
+  .header-background {
+    background-color: #fff;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+  
+  .header-container {
+    display: flex;
+    min-height: 80px;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .header-content {
+    background-color: #fff;
+    display: flex;
+    min-width: 240px;
+    margin-top: auto;
+    margin-bottom: auto;
+    min-height: 80px;
+    width: 100%;
+    max-width: 1500px;
+    padding-left: 12px;
+    padding-right: 16px;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+  
+  .header-left {
+    display: flex;
+    margin-top: auto;
+    margin-bottom: auto;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  .menu-button-wrapper {
+    display: flex;
+    margin-top: auto;
+    margin-bottom: auto;
+    padding-right: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 60px;
+  }
+  
+  .menu-button {
+    border: none;
+    background: none;
+    border-radius: 8px;
+    background-color: #fff;
+    display: flex;
+    min-width: 44px;
+    min-height: 44px;
+    width: 100%;
+    max-width: 44px;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    cursor: pointer;
+  }
+  
+  .menu-icon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 20px;
+  }
+  
+  .logo-container {
+    display: flex;
+    margin-top: auto;
+    margin-bottom: auto;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+  }
+  
+  .logo-link {
+    display: flex;
+    max-width: 100%;
+    width: 125px;
+    align-items: flex-start;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  .logo-image {
+    aspect-ratio: 5.21;
+    object-fit: contain;
+    object-position: center;
+    width: 100%;
+  }
+  
+  .header-spacer {
+    display: flex;
+    min-width: 240px;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 1069px;
+    flex-shrink: 1;
+    height: 0px;
+    flex: 1;
+  }
+  
+  .header-right {
+    display: flex;
+    margin-top: auto;
+    margin-bottom: auto;
+    align-items: center;
+    justify-content: flex-end;
+    width: 158px;
+  }
+  
+  .header-actions {
+    display: flex;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 158px;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+  }
+  
+  .trips-button-wrapper {
+    display: flex;
+    margin-top: auto;
+    margin-bottom: auto;
+    align-items: center;
+    justify-content: flex-start;
+    width: 48px;
+  }
+  
+  .trips-button {
+    border: none;
+    background: none;
+    border-radius: 8px;
+    background-color: #fff;
+    display: flex;
+    min-width: 44px;
+    min-height: 44px;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    cursor: pointer;
+  }
+  
+  .trips-icon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 32px;
+  }
+  
+  .signin-button-wrapper {
+    margin-top: auto;
+    margin-bottom: auto;
+    padding-left: 8px;
+    width: 114px;
+  }
+  
+  .signin-border {
+    border-radius: 8px;
+    border: 1px solid #192024;
+    display: flex;
+    width: 100%;
+    padding: 1px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+  }
+  
+  .signin-button {
+    border: none;
+    background: none;
+    border-radius: 8px;
+    background-color: #fff;
+    display: flex;
+    min-width: 44px;
+    min-height: 44px;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  
+  .user-icon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 20px;
+  }
+  
+  .signin-text {
+    margin-top: auto;
+    margin-bottom: auto;
+    padding-left: 8px;
+    padding-right: 16px;
+    font-size: 14px;
+    color: #192024;
+    font-weight: 400;
+    line-height: 1;
+  }
+  
+  /* Main Content Styles */
+  .main-content {
+    width: 100%;
+    padding-bottom: 48px;
+  }
+  
+  /* Hero Section Styles */
+  .hero-section {
+    position: relative;
+    border-radius: 12px;
+    background-color: #f0f3f5;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding-left: 64px;
+    overflow: hidden;
+    margin-top: 90px;
+  }
+  
+  .hero-content {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .hero-left-column {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    line-height: normal;
+    width: 71%;
+  }
+  
+  .hero-text-container {
+    display: flex;
+    margin-top: 48px;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .hero-heading {
+    white-space: pre-line;
+    margin: 0;
+    color: #192024;
+    font-weight: 700;
+    font-size: 44px;
+    line-height: 56px;
+    font-feature-settings: 'ss04', 'ss05';
+  }
+  
+  .orange-dot {
+    color: #f45500;
+  }
+  
+  .travel-options-nav {
+    align-self: flex-start;
+    display: flex;
+    margin-top: 32px;
+    padding-top: 4px;
+    padding-bottom: 24px;
+    align-items: flex-start;
+    overflow: hidden;
+    justify-content: center;
+  }
+  
+  .travel-options-menu {
+    display: flex;
+    min-width: 240px;
+    align-items: stretch;
+    gap: 4px;
+    justify-content: flex-start;
+    list-style: none;
+  }
+  
+  .travel-option-item {
+    display: flex;
+    min-width: 84px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 84px;
+  }
+  
+  .travel-option-link {
+    border-radius: 8px;
+    box-shadow: 0px 3px 6px rgba(25, 32, 36, 0.16);
+    border: 1px solid #d9e2e8;
+    fill: #192024;
+    background-color: #fff;
+    display: flex;
+    min-height: 52px;
+    width: 52px;
+    padding: 14px 1px;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .active-travel{
+    fill: #fff;
+    background: linear-gradient(135deg, #ff690f 0%, #ff4538 100%);
+  }
+  
+  .travel-option-icon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 24px;
+  }
+  
+  .travel-option-text {
+    margin-top: 8px;
+    width: 84px;
+    font-size: 14px;
+    color: #192024;
+    font-weight: 400;
+    text-align: center;
+    line-height: 1;
+  }
+  
+  .search-container {
+    margin-top: 4px;
+    width: 100%;
+  }
+  
+  .trip-type-selector {
+    display: flex;
+    min-height: 40px;
+    width: 100%;
+    padding-bottom: 12px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+  }
+  
+  .trip-type-dropdown {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  .trip-type-text {
+    font-size: 14px;
+    color: #192024;
+    font-weight: 400;
+    line-height: 1;
+  }
+  
+  .dropdown-icon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 18px;
+    margin-left: 4px;
+  }
+  
+  .search-form {
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0px 3px 6px rgba(25, 32, 36, 0.16);
+    display: flex;
+    min-height: 60px;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  
+  .search-form-locations {
+    position: relative;
+    display: flex;
+    min-width: 240px;
+    align-items: stretch;
+    justify-content: center;
+    height: 100%;
+    flex: 1;
+  }
+  
+  .origin-input-wrapper {
+    display: flex;
+    min-width: 240px;
+    padding-right: 12px;
+    padding-left: 12px;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    width: 268px;
+  }
+  
+  .location-tag {
+    border-radius: 4px;
+    background-color: #f0f3f5;
+    border: 1px solid #d9e2e8;
+    display: flex;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: 8px;
+    padding: 1px 8px;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+    justify-content: flex-start;
+  }
+  
+  .location-text {
+    padding: 4px 8px;
+    font-size: 14px;
+    color: #192024;
+    font-weight: 400;
+    text-align: center;
+    line-height: 1;
+  }
+  
+  .remove-location-button {
+    border: none;
+    background: none;
+    border-radius: 4px;
+    display: flex;
+    min-height: 28px;
+    width: 10px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  
+  .remove-icon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 10px;
+  }
+  
+  .location-input {
+    display: flex;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 77px;
+    flex-shrink: 1;
+    height: 20px;
+    flex: 1;
+    max-width: 256px;
+  }
+  
+  .destination-input-wrapper {
+    display: flex;
+    min-width: 240px;
+    padding-right: 12px;
+    padding-left: 12px;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    width: 268px;
+  }
+  
+  .location-divider {
+    background-color: #d9e2e8;
+    position: absolute;
+    z-index: 0;
+    display: flex;
+    width: 1px;
+    flex-shrink: 0;
+    height: 24px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .swap-icon {
+    aspect-ratio: 0.63;
+    object-fit: contain;
+    object-position: center;
+    width: 20px;
+    border-radius: 8px;
+    position: absolute;
+    z-index: 0;
+    min-height: 32px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    height: 32px;
+  }
+  
+  .search-form-dates {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    font-size: 16px;
+    color: #192024;
+    font-weight: 400;
+    justify-content: center;
+    height: 100%;
+    width: 191px;
+  }
+  
+  .dates-container {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .departure-date-button, .return-date-button {
+    border: none;
+    background: none;
+    border-radius: 8px;
+    display: flex;
+    min-height: 60px;
+    padding: 18px 14px;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+    text-align: left;
+  }
+  
+  .date-text {
+    font-size: 16px;
+    color: #192024;
+    font-weight: 400;
+  }
+  
+  .dates-divider {
+    background-color: #d9e2e8;
+    position: absolute;
+    z-index: 0;
+    display: flex;
+    width: 1px;
+    flex-shrink: 0;
+    height: 24px;
+    left: 0px;
+    top: 50%;
+    transform: translate(0%, -50%);
+  }
+  
+  .search-form-travelers {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    font-size: 16px;
+    color: #192024;
+    font-weight: 400;
+    justify-content: center;
+    height: 100%;
+    width: 204px;
+  }
+  
+  .travelers-dropdown {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 18px 17px;
+  }
+  
+  .travelers-text {
+    font-size: 16px;
+    color: #192024;
+    font-weight: 400;
+  }
+  
+  .travelers-divider {
+    background-color: #d9e2e8;
+    position: absolute;
+    z-index: 0;
+    display: flex;
+    width: 1px;
+    flex-shrink: 0;
+    height: 24px;
+    left: 0px;
+    top: 50%;
+    transform: translate(0%, -50%);
+  }
+
+  button.search-button {
+    border-radius: 8px;
+    box-shadow: 0px 3px 6px rgba(25, 32, 36, 0.16);
+    border: 1px solid #d9e2e8;
+    display: flex;
+    padding: 14px 1px;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    fill: #fff;
+    background: linear-gradient(135deg, #ff690f 0%, #ff4538 100%);
+    width: 44px;
+    height: 44px;
+    position: absolute;
+    right: 8px;
+    top: 4px;
+   }
+  
+  .search-options {
+    display: flex;
+    min-height: 56px;
+    width: 100%;
+    padding-bottom: 24px;
+    align-items: flex-start;
+    gap: 40px 100px;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  
+  .search-options-left {
+    display: flex;
+    padding-top: 4px;
+    font-size: 14px;
+    color: #192024;
+    font-weight: 400;
+    line-height: 1;
+    width: 225px;
+  }
+  
+  .compare-text {
+    padding-right: 24px;
+    padding-bottom: 8px;
+  }
+  
+  .compare-options {
+    display: flex;
+    padding-right: 16px;
+    padding-bottom: 8px;
+    align-items: flex-start;
+    white-space: nowrap;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  
+  .compare-option {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  .compare-icon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 16px;
+    border-radius: 4px;
+  }
+  
+  .compare-label {
+    padding-left: 8px;
+  }
+  
+  .direct-flights-option {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  .checkbox-border {
+    border-radius: 4px;
+    background-color: #fff;
+    display: flex;
+    margin-top: auto;
+    margin-bottom: auto;
+    flex-direction: column;
+    align-items: center;
+    width: 16px;
+    height: 16px;
+  }
+  
+  .checkbox {
+    border-radius: 4px;
+    border: 1px solid #9ba8b0;
+    display: flex;
+    flex-shrink: 0;
+    height: 16px;
+  }
+  
+  .direct-flights-label {
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 100%;
+    padding-left: 8px;
+    font-size: 14px;
+    color: #192024;
+    font-weight: 400;
+    line-height: 1;
+  }
+  
+  .hero-right-column {
+    display: flex;
+    width: 464px;
+    height: 1000px;
+    position: absolute;
+    top: -160px;
+    left: 1060px;
+    column-gap: 24px;
+  }
+
+  .hero-grid{
+    position: relative;
+    height: 100%;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* opacity: 0; */
+    row-gap: 16px;
+  }
+
+  .grid-animate-down {
+    animation-name: moveDown, fadeIn;
+    animation-fill-mode: forwards;
+    animation-delay: 180ms;
+    animation-duration: 310ms;
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.6,0,1,1);
+    transform: translateY(36px);
+}
+
+  .grid-animate-up{
+    animation-name: moveUp, fadeIn;
+    animation-fill-mode: forwards;
+    animation-delay: 180ms;
+    animation-duration: 310ms;
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.6,0,1,1);
+    transform: translateY(-36px);
+  }
+  
+  .hero-image {
+    aspect-ratio: 0.87;
+    object-fit: contain;
+    object-position: center;
+    width: 100%;
+    flex-grow: 1;
+  }
+  
+  /* Recent Searches Section Styles */
+  .recent-searches-section {
+    display: flex;
+    min-height: 477px;
+    width: 100%;
+    padding-top: 42px;
+    padding-bottom: 42px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .section-container {
+    width: 1340px;
+    max-width: 100%;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+  
+  .section-header {
+    display: flex;
+    width: 100%;
+    padding-bottom: 32px;
+    align-items: flex-end;
+    font-size: 32px;
+    color: #192024;
+    font-weight: 400;
+    line-height: 1;
+    justify-content: flex-start;
+  }
+  
+  .section-title {
+    max-width: 100%;
+  }
+  
+  .search-cards-container {
+    display: flex;
+    align-items: stretch;
+    /* box-shadow: 0px 12px 30px 0px rgba(25, 32, 36, 0.16); */
+    overflow-x: auto;
+    /* width: 964px; */
+    max-width: 100%;
+    overflow: hidden;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 30px;
+  }
+  
+  .search-card {
+    padding-right: 8px;
+    justify-content: center;
+    align-items: stretch;
+    box-shadow: 0px 12px 30px 0px rgba(25, 32, 36, 0.16);
+    display: flex;
+    min-width: 240px;
+    border-radius: 32px;
+    flex-direction: column;
+    /* flex-grow: 1; */
+    flex-shrink: 1;
+    /* width: 258px; */
+  }
+
+  .search-card:hover {
+    transform: scale(1.04);
+    transition: transform 250ms ease, margin 250ms ease;
+  }
+
+  .new-search-card:hover {
+    transform: scale(1.04);
+    transition: transform 250ms ease, margin 250ms ease;
+  }
+
+  .deal-card:hover {
+    transform: scale(1.02);
+    transition: transform 250ms ease, margin 250ms ease;
+  }
+
+  .pro-card:hover {
+    transform: scale(1.02);
+    transition: transform 250ms ease, margin 250ms ease;
+  }
+  
+  .search-card-content {
+    border-radius: 32px;
+    background-color: #fff;
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: flex-start;
+    aspect-ratio: 1;
+    min-height: 309px;
+    min-width: 240px;
+    width: 306px;
+    padding: 32px;
+    flex-direction: column;
+  }
+  
+  .search-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 16px;
+    color: #192024;
+    font-weight: 400;
+    white-space: nowrap;
+    justify-content: flex-start;
+  }
+  
+  .search-card-icon {
+    aspect-ratio: 0.95;
+    object-fit: contain;
+    object-position: center;
+    width: 38px;
+    border-radius: 29px;
+  }
+  
+  .search-route {
+    display: flex;
+    margin-top: auto;
+    margin-bottom: auto;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  
+  .search-origin {
+    display: flex;
+    margin-top: auto;
+    margin-bottom: auto;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+    justify-content: flex-start;
+  }
+  
+  .route-arrow {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 20px;
+  }
+  
+  .search-destination {
+    display: flex;
+    margin-top: auto;
+    margin-bottom: auto;
+    align-items: center;
+    overflow: hidden;
+    justify-content: center;
+  }
+  
+  .search-card-details {
+    margin-top: 24px;
+    width: 148px;
+    max-width: 100%;
+  }
+  
+  .search-dates {
+    display: flex;
+    min-height: 24px;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 16px;
+    color: #192024;
+    font-weight: 400;
+    min-width: 150px;
+  }
+  
+  .date-arrow {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 20px;
+    margin: 0 2px;
+  }
+  
+  .search-travelers, .search-type {
+    min-height: 24px;
+    font-size: 16px;
+    color: #192024;
+    font-weight: 400;
+  }
+  
+  .search-card-footer {
+    display: flex;
+    margin-top: 57px;
+    width: 100%;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .search-price {
+    min-height: 32px;
+    font-size: 24px;
+    color: #192024;
+    font-weight: 400;
+    line-height: 1;
+  }
+  
+  .search-again-button {
+    border-radius: 8px;
+    box-shadow: 0px 3px 6px rgba(25, 32, 36, 0.16);
+    border: 1px solid #d9e2e8;
+    display: flex;
+    padding: 14px 1px;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    fill: #fff;
+    background: linear-gradient(135deg, #ff690f 0%, #ff4538 100%);
+    width: 44px;
+    height: 44px;
+  }
+  
+  .search-again-icon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 28px;
+  }
+  
+  .new-search-card {
+    box-shadow: 0px 12px 30px 0px rgba(25, 32, 36, 0.16);
+    min-width: 240px;
+    border-radius: 32px;
+  }
+  
+  .new-search-content {
+    border-radius: 32px;
+    background-color: #fff;
+    display: flex;
+    min-height: 309px;
+    min-width: 240px;
+    width: 312px;
+    padding: 32px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .new-search-icon-wrapper {
+    border-radius: 100px;
+    border: 1px solid #d9e2e8;
+    display: flex;
+    width: 66px;
+    padding: 21px;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .new-search-icon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 24px;
+  }
+  
+  .new-search-title {
+    margin-top: 16px;
+    font-size: 16px;
+    color: #192024;
+    font-weight: 400;
+  }
+  
+  .new-search-options {
+    display: flex;
+    margin-top: 16px;
+    width: 192px;
+    max-width: 100%;
+    align-items: stretch;
+    gap: 16px;
+  }
+  
+  .new-search-option {
+    border-radius: 8px;
+    flex: 1;
+    display: flex;
+    min-height: 40px;
+    padding: 8px;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    fill: #fff;
+    background: linear-gradient(135deg, #ff690f 0%, #ff4538 100%);
+  }
+  
+  .new-search-option:first-child {
+    border: 1px solid #e8381b;
+  }
+  
+  .option-icon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 20px;
+  }
+  
+  /* Travel Deals Section Styles */
+  .travel-deals-section {
+    background-color: #f9fafb;
+    display: flex;
+    min-height: 477px;
+    width: 100%;
+    padding-top: 42px;
+    padding-bottom: 42px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .travel-deals-section .section-container {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+  
+  .travel-deals-section .section-header {
+    display: flex;
+    width: 100%;
+    padding-right: 5px;
+    padding-bottom: 20px;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .explore-more-link-wrapper {
+    margin-top: 12px;
+    padding-left: 16px;
+  }
+  
+  .explore-more-link {
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    text-decoration: none;
+    color: #192024;
+    font-size: 16px;
+    padding: 8px 12px;
+  }
+  
+  .explore-arrow {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 18px;
+    margin-left: 4px;
+  }
+  
+  .deals-container {
+    display: flex;
+    min-height: 494px;
+    width: 100%;
+    max-width: 1280px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+  
+  .shadow-container{
+    filter: drop-shadow(0 12px 30px rgba(25, 32, 36, 0.16));
+  }
+
+  .deals-cards-wrapper {
+    overflow-x: auto;
+    align-self: flex-end;
+    display: flex;
+    width: 100%;
+    padding-bottom: 17px;
+    align-items: flex-start;
+    overflow: hidden;
+    scroll-behavior: smooth; /* Add smooth scrolling */
+    gap: 12px; /* Add consistent gap between slides */
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .deals-cards-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+
+  .deals-cards-wrapper {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .deal-card {
+    flex: 0 0 auto; /* Prevent stretching */
+    width: 306px; /* Fixed width */
+    padding-right: 8px;
+    justify-content: center;
+    align-items: stretch;
+    display: flex;
+    margin-top: -17px;
+    min-height: 426px;
+    flex-direction: column;
+  }
+  
+  .deal-card-link {
+    border-radius: 32px;
+    background-color: #fff;
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    justify-content: flex-start;
+    text-decoration: none;
+    min-height: 382px;
+    min-width: 240px;
+    width: 306px;
+    padding: 8px 8px 24px 8px;
+    flex-direction: column;
+  }
+  
+  .deal-image-container {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    flex: 1;
+  }
+  
+  .deal-image {
+    aspect-ratio: 1.74;
+    object-fit: contain;
+    object-position: center;
+    width: 100%;
+    border-radius: 24px;
+  }
+  
+  .deal-details {
+    display: flex;
+    width: 100%;
+    padding: 16px;
+    flex-direction: column;
+    align-items: stretch;
+    /* font-family: "TT Hoves Variable", -apple-system, Roboto, Helvetica, sans-serif; */
+    font-family: var(--primary-font);
+    color: #192024;
+    font-weight: 400;
+    justify-content: center;
+    flex: 1;
+  }
+  
+  .deal-destination {
+    width: 100%;
+    padding-bottom: 4px;
+    font-size: 24px;
+    white-space: nowrap;
+    line-height: 1;
+  }
+  
+  .deal-info {
+    width: 100%;
+    font-size: 16px;
+    flex: 1;
+  }
+  
+  .deal-duration {
+    width: 100%;
+  }
+  
+  .deal-dates {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 2px;
+    justify-content: flex-start;
+  }
+  
+  .deal-price {
+    display: flex;
+    margin-top: 47px;
+    width: 100%;
+    padding-top: 4px;
+    align-items: flex-end;
+    font-size: 24px;
+    line-height: 1;
+    justify-content: flex-start;
+  }
+  
+  .feature-card {
+    display: flex;
+    min-height: 390px;
+    padding-right: 8px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    flex: 1;
+  }
+  
+  .feature-card-link {
+    border-radius: 32px;
+    background-color: #fff;
+    display: flex;
+    min-height: 346px;
+    width: 100%;
+    max-width: 314px;
+    padding-top: 16px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-decoration: none;
+  }
+  
+  .feature-card-content {
+    width: 100%;
+    padding: 16px 32px 4px 32px;
+    /* font-family: "TT Hoves Variable", -apple-system, Roboto, Helvetica, sans-serif; */
+    font-family: var(--primary-font);
+    color: #192024;
+    font-weight: 400;
+    flex: 1;
+  }
+  
+  .feature-title {
+    width: 100%;
+    max-width: 242px;
+    overflow: hidden;
+    font-size: 24px;
+    line-height: 1;
+  }
+  
+  .feature-description {
+    margin-top: 4px;
+    width: 100%;
+    font-size: 16px;
+  }
+  
+  .feature-image-container {
+    border-radius: 0px 0px 32px 32px;
+    display: flex;
+    min-height: 250px;
+    width: 100%;
+    padding: 16px 32px 32px 32px;
+    align-items: center;
+    overflow: hidden;
+    justify-content: center;
+    margin: 0;
+  }
+  
+  .feature-image-placeholder {
+    align-self: stretch;
+    display: flex;
+    min-height: 202px;
+    min-width: 240px;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 100%;
+    flex: 1;
+  }
+  
+  .scroll-controls {
+    display: flex;
+    min-height: 42px;
+    margin-top: 20px;
+    width: 100%;
+    padding-left: 1180px;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  .scroll-buttons {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    gap: 16px;
+    justify-content: flex-start;
+  }
+  
+  .scroll-left-button, .scroll-right-button {
+    border: none;
+    background: none;
+    border-radius: 42px;
+    background-color: #f0f3f5;
+    border: 1px solid #d9e2e8;
+    display: flex;
+    min-height: 42px;
+    width: 42px;
+    padding: 2px;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    cursor: pointer;
+    transition: opacity 0.3s ease, background-color 0.3s ease;
+  }
+
+  .scroll-left-button:hover, .scroll-right-button:hover {
+    background-color: #e6e9eb;
+  }
+  
+  .scroll-icon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 32px;
+  }
+  
+  /* Travel Pros Section Styles */
+  .travel-pros-section {
+    display: flex;
+    width: 100%;
+    padding-top: 48px;
+    padding-bottom: 48px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .pros-container {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+  
+  .pros-cards-wrapper {
+    overflow-x: auto;
+    align-self: flex-end;
+    display: flex;
+    width: 100%;
+    padding-bottom: 36px;
+    align-items: flex-start;
+    overflow: hidden;
+  }
+  
+  .pro-card {
+    padding-right: 8px;
+    justify-content: center;
+    align-items: stretch;
+    display: flex;
+    min-height: 370px;
+    flex-direction: column;
+    flex: 1;
+  }
+  
+  .pro-card-link {
+    border-radius: 32px;
+    background-color: #fff;
+    display: flex;
+    min-height: 346px;
+    width: 100%;
+    max-width: 314px;
+    padding-top: 16px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-decoration: none;
+  }
+  
+  .pro-card-content {
+    width: 100%;
+    padding: 16px 32px 4px 32px;
+    /* font-family: "TT Hoves Variable", -apple-system, Roboto, Helvetica, sans-serif; */
+    font-family: var(--primary-font);
+    font-weight: 400;
+    flex: 1;
+  }
+  
+  .pro-title {
+    display: flex;
+    width: 100%;
+    max-width: 242px;
+    padding-right: 48px;
+    align-items: stretch;
+    gap: 7px;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 24px;
+    color: #192024;
+    line-height: 1;
+  }
+  
+  .pro-title-text {
+    color: #192024;
+    font-size: 24px;
+    line-height: 1;
+  }
+  
+  .beta-badge {
+    border-radius: 4px;
+    background-color: #192024;
+    border: 1px solid #192024;
+    margin-top: auto;
+    margin-bottom: auto;
+    padding: 3px;
+    font-size: 10px;
+    color: #fff;
+    letter-spacing: 0.38px;
+    line-height: 1.4;
+  }
+  
+  .pro-description {
+    margin-top: 4px;
+    width: 100%;
+    font-size: 16px;
+    color: #192024;
+  }
+  
+  .pro-image-container {
+    margin: 0;
+    flex: 1;
+    width: 100%;
+  }
+  
+  .pro-image {
+    aspect-ratio: 1.2;
+    object-fit: contain;
+    object-position: center;
+    width: 100%;
+    align-self: stretch;
+    min-width: 240px;
+    margin-top: auto;
+    margin-bottom: auto;
+    flex: 1;
+  }
+  
+  .pro-image-placeholder {
+    align-self: stretch;
+    display: flex;
+    min-height: 193px;
+    min-width: 240px;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 100%;
+    flex: 1;
+  }
+  
+  /* Travel Planning Section Styles */
+  .travel-planning-section {
+    margin-top: 40px;
+    width: 100%;
+  }
+  
+  .planning-container {
+    width: 1340px;
+    max-width: 100%;
+    padding-left: 30px;
+    padding-right: 30px;
+    margin: 0 auto;
+  }
+  
+  .planning-content {
+    width: 100%;
+  }
+  
+  .planning-subtitle {
+    width: 100%;
+    font-size: 32px;
+    color: #212a30;
+    font-weight: 400;
+    line-height: 1;
+  }
+  
+  .planning-title {
+    display: flex;
+    margin-top: 4px;
+    height: 24px;
+    width: 100%;
+    align-items: center;
+    font-size: 20px;
+    color: #212a30;
+    font-weight: 400;
+    line-height: 1.2;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  .planning-link {
+    color: #007799;
+    text-decoration: none;
+    padding: 1px 0;
+  }
+  
+  .destinations-grid {
+    display: flex;
+    min-height: 400px;
+    margin-top: 4px;
+    width: 100%;
+    padding-top: 20px;
+    align-items: stretch;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding-bottom: 48px;
+  }
+  
+  .destinations-column {
+    min-width: 240px;
+    flex-grow: 1;
+    flex-shrink: 1;
+    width: 320px;
+  }
+  
+  .destination-item {
+    width: 100%;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5ebf0;
+    margin-bottom: 12px;
+  }
+
+  .dropdown-item-link {
+    color: #647582;
+    font-size: 12px;
+    line-height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-decoration: none;
+  }
+
+  li.dropdown-item {
+    text-decoration: none;
+    list-style: none;
+  }
+  
+  .destination-header {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 40px 100px;
+    justify-content: space-between;
+  }
+  
+  .destination-name {
+    font-size: 14px;
+    color: #000;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+    .destination-dropdown {
+        display: none;
+        transition: all 0.3s ease;
+    }
+
+    .destination-item.active .destination-dropdown {
+        display: block;
+    }
+
+    .destination-item.active .view-more-icon {
+        transform: rotate(180deg);
+    }
+
+    .view-more-icon {
+        transition: transform 0.3s ease;
+    }
+
+    .destination-accordion {
+        cursor: pointer;
+    }
+  
+  .view-more-button {
+    border: none;
+    background: none;
+    width: 24px;
+    cursor: pointer;
+  }
+  
+  .view-more-icon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 24px;
+  }
+  
+  .destination-links {
+    display: flex;
+    width: 100%;
+    padding-top: 4px;
+    align-items: flex-start;
+    font-size: 12px;
+    color: #0b7b99;
+    font-weight: 400;
+    justify-content: flex-start;
+  }
+  
+  .destination-link {
+    color: rgb(11, 123, 153);
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 18px;
+    font-feature-settings: 'liga' 0;
+    font-weight: 600;
+  }
+  
+  .dot {
+    margin-right: 4px;
+    margin-left: 4px;
+    color: #0b7b99;
+  }
+
+
+  /* Swiper custom styles */
+.deals-swiper {
+    width: 100%;
+    padding: 20px 0;
+}
+
+.swiper-slide {
+    width: auto;
+    height: auto;
+}
+
+.swiper-button-disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+/* Pros Swiper Styles */
+.pros-swiper {
+    width: 100%;
+    padding: 20px 0;
+    position: relative;
+}
+
+.pros-swiper .swiper-slide {
+    width: auto;
+    height: auto;
+}
+
+.pros-swiper .pro-card {
+    margin: 0;
+    padding-right: 8px;
+}
+
+.pros-container .scroll-buttons {
+    pointer-events: all;
+}
+
+/* Smooth transition for cards */
+.pro-card {
+    transition: transform 0.3s ease;
+}
+
+.pro-card:hover {
+    transform: scale(1.02);
+}
+
+.faq-section {
+    padding-bottom: 48px;
+}
+
+.faq-title {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 32px;
+    font-feature-settings: 'ss04', 'ss05';
+    color: #192024;
+    margin-block-start: 0.83em;
+    margin-block-end: 0.83em;
+}
+
+.faq-list{
+    display: flex;
+    flex-grow: 1;
+    min-width: 0;
+    flex-wrap: wrap;
+    list-style-type: none;
+    justify-content: space-between;
+}
+
+.faq-item{
+    width: calc(50% - (16px / 2));
+    flex: 0 1 calc(48% - (16px / 2));
+    width: 100%;
+    border-bottom: 1px solid #d9e2e8;
+    color: #192024;
+}
+
+.faq-question {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    text-align: left;
+    list-style: none;
+    padding: 12px 0;
+}
+
+.question-text{
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    font-feature-settings: 'liga' 0;
+    letter-spacing: unset;
+    margin: 12px 0;
+}
+
+.faq-answer {
+    display: none;
+    font-size: 14px;
+    line-height: 20px;
+    margin-bottom: 12px;
+    padding: 0 16px;
+    transition: all 0.3s ease;
+}
+
+.expand-icon {
+    transition: transform 0.3s ease;
+}
+
+.faq-item.active .expand-icon {
+    transform: rotate(180deg);
+}
+
+.faq-item.active .faq-answer {
+    display: block;
+}
+
+.description-container {
+    text-align: center;
+}
+
+a.description-link {
+    color: #079;
+}
+
+.site-footer {
+    padding: 48px 0;
+    background-color: #fff;
+    border-top: 1px solid #d9e2e8;
+}
+
+.footer-container {
+    max-width: 1340px;
+    margin: 0 auto;
+    padding: 0 30px;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.footer-columns {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+}
+
+.footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.footer-heading {
+    color: #192024;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.footer-link {
+    color: #192024;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 20px;
+    text-decoration: underline;
+}
+
+.footer-link:hover {
+    color: #007799;
+}
+
+.app-download {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.app-links {
+    display: flex;
+    gap: 8px;
+    flex-direction: column;
+}
+
+.app-badge {
+    height: 40px;
+    width: auto;
+}
+
+.footer-divider {
+    height: 1px;
+    background-color: #d9e2e8;
+    margin: 24px 0;
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-legal {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.copyright {
+    color: #192024;
+    font-size: 12px;
+}
+
+.legal-links {
+    display: flex;
+    gap: 24px;
+}
+
+.legal-link {
+    color: #192024;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.legal-link:hover {
+    color: #007799;
+}
+
+.social-links {
+    display: flex;
+    gap: 16px;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.social-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.payment-methods {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    margin-top: 24px;
+}
+
+.brand-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+    background-color: #fff;
+    height: 44px;
+}
+
+@media (max-width: 991px) {
+.brand-nav {
+    padding: 0 15px;
+}
+}
+
+@media (max-width: 640px) {
+.brand-nav {
+    padding: 0 10px;
+}
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    flex-direction: row;
+}
+
+@media (max-width: 991px) {
+.logo-container {
+    gap: 30px;
+}
+}
+
+@media (max-width: 640px) {
+.logo-container {
+    gap: 20px;
+}
+}
+
+.brand-logo {
+height: 18px;
+}
+
+.settings-container {
+display: flex;
+align-items: center;
+gap: 4px;
+}
+
+@media (max-width: 640px) {
+.settings-container {
+    display: none;
+}
+}
+
+.language-selector {
+display: flex;
+align-items: center;
+padding: 12px 16px;
+background-color: #fff;
+border-radius: 8px;
+box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+border: none;
+cursor: pointer;
+}
+
+@media (max-width: 991px) {
+.language-selector {
+    padding: 10px 14px;
+}
+}
+
+@media (max-width: 640px) {
+.language-selector {
+    padding: 8px 12px;
+}
+}
+
+.flag-icon {
+width: 18.5px;
+height: 12.5px;
+margin-right: 8px;
+}
+
+.selector-text {
+font-family: "TT Hoves Variable", sans-serif;
+font-size: 14px;
+color: #192024;
+}
+
+.currency-selector {
+display: flex;
+align-items: center;
+padding: 12px 16px;
+background-color: #fff;
+border-radius: 8px;
+box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+border: none;
+cursor: pointer;
+}
+
+@media (max-width: 991px) {
+.currency-selector {
+    padding: 10px 14px;
+}
+}
+
+@media (max-width: 640px) {
+.currency-selector {
+    padding: 8px 12px;
+}
+}
+
+.currency-symbol {
+margin-right: 8px;
+font-family: "TT Hoves Variable", sans-serif;
+font-size: 24px;
+color: #8796a1;
+} 
+</style>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>  
+</head>
+<body>
+  <div class="overlay"></div>  
+  <div class="kayak-desktop">
+    <!-- Header Section -->
+    <header class="main-header">
+      <div class="header-background">
+        <div class="header-container">
+          <div class="header-content">
+            <div class="header-left">
+              <div class="menu-button-wrapper">
+                <button class="menu-button">
+                  <img src="https://i.ibb.co/7NKQJmLH/menu-icon.webp" alt="Menu" class="menu-icon">
+                </button>
+              </div>
+              <div class="logo-container">
+                <a href="#" class="logo-link">
+                  <img src="https://i.ibb.co/d0hV0ty0/site-logo.webp" alt="KAYAK" class="logo-image">
+                </a>
+              </div>
+            </div>
+            <div class="header-spacer"></div>
+            <div class="header-right">
+              <div class="header-actions">
+                <div class="trips-button-wrapper">
+                  <button class="trips-button">
+                    <img src="https://i.ibb.co/4wPbY4rR/wishlist-icon.webp" alt="Trips" class="trips-icon">
+                  </button>
+                </div>
+                <div class="signin-button-wrapper">
+                  <div class="signin-border">
+                    <button class="signin-button">
+                      <img src="https://i.ibb.co/7xzyBqf0/account-icon.webp" alt="User" class="user-icon">
+                      <span class="signin-text">Sign in</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Side menu Section -->
+    <nav class="sidebar-nav">
+        <!-- Main navigation section -->
+        <div class="menu-item active-item">
+          <div class="icon-container">
+            <svg
+              width="37"
+              height="37"
+              viewBox="0 0 37 37"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon-svg"
+            >
+              <path
+                d="M32.5104 8.47684C32.0279 8.95618 29.6187 11.6117 27.2984 13.9166C27.2984 33.3415 27.9388 31.8833 24.6785 35.1219L22.094 24.2495L19.4534 21.6266C12.4563 28.5756 13.5107 23.1945 13.5107 29.847C13.5174 31.2998 12.9036 32.2554 12.0234 33.1296L9.57466 27.6319L4.03948 25.1996C5.8564 23.3965 6.8491 23.7223 11.1473 23.7223C12.6102 20.7224 14.4185 19.4365 15.8333 18.0307L13.1981 15.4133L2.25586 12.8501C5.3434 9.7831 3.4507 10.349 23.5671 10.349C25.8999 8.03188 28.4059 5.36248 28.8905 4.88116C30.2846 3.4966 33.9335 2.2969 34.5074 2.86678C35.081 3.43666 33.9045 7.0921 32.5104 8.47684ZM30.0491 16.1213L28.5913 17.5661V21.8105C31.7427 18.6515 32.5446 18.6125 30.0491 16.1213ZM21.3866 7.49512C18.9246 5.03776 19.1111 5.54608 15.5993 9.03772H19.8518L21.3866 7.49512Z"
+                fill="black"
+              ></path>
+            </svg>
+          </div>
+          <span class="menu-text">Flights</span>
+        </div>
+  
+        <div class="menu-item">
+          <div class="icon-container">
+            <svg
+              width="37"
+              height="37"
+              viewBox="0 0 37 37"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon-svg"
+            >
+              <path
+                d="M30.4555 9.02148V16.3003H29.3615C28.8346 14.9248 27.5336 13.9517 26.0122 13.9517H22.7181C21.1967 13.9517 19.8957 14.9248 19.3688 16.3003H17.5425C17.0157 14.9248 15.7146 13.9517 14.1933 13.9517H10.8991C9.37772 13.9517 8.07668 14.9248 7.54982 16.3003H6.45506V9.02148H30.4555ZM32.8557 21.3967C32.8557 19.527 31.5156 17.9799 29.7721 17.7221H7.13924C5.39486 17.9799 4.05566 19.527 4.05566 21.3967V28.8222H6.45506V25.1093H30.4555V28.8222H32.8557V21.3967Z"
+                fill="#8796A1"
+              ></path>
+            </svg>
+          </div>
+          <span class="menu-text">Stays</span>
+        </div>
+  
+        <div class="menu-item">
+          <div class="icon-container">
+            <svg
+              width="37"
+              height="37"
+              viewBox="0 0 37 37"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon-svg"
+            >
+              <path
+                d="M4.5262 16.1346C3.27232 16.1346 2.25586 15.1206 2.25586 13.87H4.5262C5.78008 13.87 6.79654 14.8838 6.79654 16.1346H4.5262ZM32.3855 13.87C31.1316 13.87 30.1152 14.8838 30.1152 16.1346H32.3855C33.6394 16.1346 34.6559 15.1206 34.6559 13.87H32.3855ZM29.6909 16.2797C32.9293 20.555 32.4271 17.3096 32.4271 29.7217H27.8864V26.9346H8.8507V29.7217H4.48462C4.48462 18.6758 3.85066 19.4333 7.23142 16.2168C9.86248 6.53068 10.6437 8.1217 23.4631 8.1217C28.0148 8.1217 28.8386 13.1136 29.6909 16.2797ZM9.70822 16.1551H27.1869C25.3041 9.18208 26.1302 10.3863 13.5003 10.3863C10.9304 10.3863 10.3397 13.8727 9.70822 16.1551ZM11.4396 21.012C11.4396 19.7614 10.4232 18.7475 9.1693 18.7475H6.89914C6.89914 19.9981 7.9156 21.012 9.16948 21.012H11.4396ZM22.3665 23.1024H14.5263C14.4011 23.1026 14.2777 23.1326 14.1665 23.19C14.0552 23.2474 13.9592 23.3305 13.8865 23.4324C13.8138 23.5343 13.7664 23.6521 13.7483 23.776C13.7302 23.8999 13.742 24.0263 13.7825 24.1448C14.0198 24.8673 14.0991 24.6702 22.3854 24.6702C23.4147 24.67 23.4458 23.1024 22.3665 23.1024ZM30.0128 18.7475H27.7494C26.4995 18.7475 25.4791 19.7654 25.4791 21.012H27.7424C28.9923 21.012 30.0128 19.9943 30.0128 18.7475Z"
+                fill="#8796A1"
+              ></path>
+            </svg>
+          </div>
+          <span class="menu-text">Car Rental</span>
+        </div>
+  
+        <div class="menu-item">
+          <div class="icon-container">
+            <svg
+              width="37"
+              height="37"
+              viewBox="0 0 37 37"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon-svg"
+            >
+              <path
+                d="M28.8872 18.3814C30.0729 14.1143 30.3087 10.3786 29.6558 7.80905C33.5202 10.6543 35.4308 15.5789 34.3623 20.3741L28.8872 18.3814ZM22.8302 5.43053C18.1535 5.25449 13.6758 7.77431 11.4612 12.0389L16.7174 13.9519C18.5252 9.97985 20.7077 6.99869 22.8302 5.43053ZM30.6059 28.3719H19.0459L23.414 16.3891L27.4143 17.8451C28.8208 12.6932 28.6484 8.69087 27.6125 6.85991C26.9614 6.31721 27.0219 6.22451 25.5066 5.82203C23.5144 6.27365 20.5826 9.29459 18.1907 14.4881L21.4037 15.6576L16.7687 28.3719H6.30586C4.06918 28.3719 2.25586 30.1852 2.25586 32.4219H34.6559C34.6559 30.1852 32.8425 28.3719 30.6059 28.3719Z"
+                fill="#8796A1"
+              ></path>
+            </svg>
+          </div>
+          <span class="menu-text">Flight+Hotel</span>
+        </div>
+  
+        <div class="menu-item">
+          <div class="icon-container">
+            <svg
+              width="21"
+              height="21"
+              viewBox="0 0 21 21"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon-svg"
+            >
+              <path
+                d="M11.9794 8.46805C9.64386 8.03385 7.81746 6.19255 7.38336 3.87215C7.36826 3.75225 7.20225 3.75225 7.18865 3.87215C6.75445 6.20745 4.91315 8.03385 2.59285 8.45755C2.47295 8.48315 2.47295 8.64765 2.59285 8.66275C4.92805 9.09685 6.75445 10.9383 7.18865 13.2587C7.20375 13.3784 7.36826 13.3784 7.38336 13.2587C7.81746 10.9233 9.65885 9.09685 11.9794 8.66275C12.0991 8.64765 12.0991 8.49795 11.9794 8.46805Z"
+                fill="black"
+              ></path>
+              <path
+                d="M13.6371 15.729C12.4671 15.509 11.5471 14.589 11.3271 13.419C11.3171 13.359 11.2371 13.359 11.2271 13.419C11.0071 14.589 10.0871 15.509 8.91707 15.729C8.85707 15.739 8.85707 15.819 8.91707 15.829C10.0871 16.048 11.0071 16.969 11.2271 18.139C11.2371 18.199 11.3171 18.199 11.3271 18.139C11.5471 16.969 12.4671 16.049 13.6371 15.829C13.6871 15.819 13.6871 15.739 13.6371 15.729Z"
+                fill="black"
+              ></path>
+              <path
+                d="M18.4169 10.1085C16.8569 9.81852 15.6369 8.58852 15.3469 7.03852C15.3369 6.95852 15.2259 6.95852 15.2169 7.03852C14.9269 8.59852 13.6969 9.81852 12.1469 10.1015C12.0669 10.1185 12.0669 10.2285 12.1469 10.2385C13.7069 10.5285 14.9269 11.7585 15.2169 13.3085C15.2269 13.3885 15.3369 13.3885 15.3469 13.3085C15.6369 11.7485 16.8669 10.5285 18.4169 10.2385C18.4969 10.2285 18.4969 10.1285 18.4169 10.1085Z"
+                fill="black"
+              ></path>
+            </svg>
+          </div>
+          <span class="menu-text">KAYAK.ai</span>
+          <span class="badge">BETA</span>
+        </div>
+  
+        <!-- Divider -->
+        <div class="divider"></div>
+  
+        <!-- Secondary navigation section -->
+        <div class="menu-item">
+          <div class="icon-container">
+            <svg
+              width="37"
+              height="37"
+              viewBox="0 0 37 37"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon-svg"
+            >
+              <path
+                d="M31.0342 25.7235C32.337 23.3886 32.9628 20.7365 32.841 18.0654C32.7192 15.3944 31.8547 12.8102 30.3448 10.6035C30.3268 10.5765 30.3052 10.5513 30.2854 10.5243C28.9641 8.61422 27.2 7.05247 25.1437 5.97258C23.0875 4.8927 20.8003 4.3268 18.4778 4.32326C16.1552 4.31972 13.8664 4.87865 11.8069 5.95227C9.74735 7.02588 7.97845 8.58225 6.65137 10.4883C6.62437 10.5279 6.59197 10.5657 6.56497 10.6053C6.31837 10.9653 6.09157 11.3379 5.87737 11.7213C4.57451 14.0563 3.9488 16.7084 4.07058 19.3794C4.19237 22.0505 5.05683 24.6346 6.56677 26.8413C6.58477 26.8683 6.60637 26.8935 6.62617 26.9205C7.94744 28.8306 9.71159 30.3924 11.7678 31.4723C13.8241 32.5522 16.1112 33.1181 18.4338 33.1216C20.7563 33.1251 23.0452 32.5662 25.1047 31.4926C27.1642 30.419 28.9331 28.8626 30.2602 26.9565C30.2872 26.9169 30.3196 26.8791 30.3466 26.8395C30.5932 26.4795 30.82 26.1015 31.0342 25.7235ZM18.4558 21.3405C17.2281 21.3475 16.0037 21.468 14.7982 21.7005C14.4418 19.7368 14.4388 17.7253 14.7892 15.7605C15.9977 15.9932 17.2251 16.1137 18.4558 16.1205C19.6865 16.1146 20.914 15.994 22.1224 15.7605C22.2941 16.7382 22.3814 17.7289 22.3834 18.7215C22.3774 19.7186 22.2871 20.7133 22.1134 21.6951C20.9076 21.465 19.6833 21.3463 18.4558 21.3405ZM21.4762 24.2421C20.8177 26.2706 19.7941 28.1616 18.4558 29.8221C17.1169 28.162 16.0933 26.2708 15.4354 24.2421C16.4319 24.0588 17.4426 23.9636 18.4558 23.9577C19.4688 23.9663 20.4793 24.0615 21.4762 24.2421ZM15.4264 13.1991C16.1035 11.1769 17.1287 9.28851 18.4558 7.61913C19.7826 9.28865 20.8078 11.177 21.4852 13.1991C20.4858 13.384 19.4721 13.4798 18.4558 13.4853C17.4396 13.4769 16.4261 13.3811 15.4264 13.1991ZM24.6694 15.1071C26.1322 14.6306 27.5376 13.9931 28.8598 13.2063C29.7634 14.9039 30.2359 16.7975 30.2359 18.7206C30.2359 20.6437 29.7634 22.5373 28.8598 24.2349C27.5335 23.4449 26.1216 22.8084 24.6514 22.3377C24.8753 21.1451 24.9922 19.9349 25.0006 18.7215C25 17.5092 24.8891 16.2994 24.6694 15.1071ZM27.3694 11.0409C26.3125 11.6594 25.1956 12.169 24.0358 12.5619C23.4357 10.7149 22.5802 8.96092 21.4942 7.35093C23.7787 7.96301 25.826 9.24883 27.3694 11.0409ZM15.4192 7.35093C14.3373 8.95581 13.4843 10.7036 12.8848 12.5439C11.7222 12.1584 10.6026 11.6535 9.54397 11.0373C11.0885 9.24732 13.1355 7.96295 15.4192 7.35093ZM12.244 15.0999C11.7957 17.4897 11.8 19.9423 12.2566 22.3305C10.7884 22.8074 9.37804 23.4468 8.05177 24.2367C7.14819 22.5391 6.67561 20.6455 6.67561 18.7224C6.67561 16.7993 7.14819 14.9057 8.05177 13.2081C9.37315 13.9952 10.7795 14.6299 12.244 15.0999ZM9.54397 26.4021C10.6056 25.781 11.7281 25.2701 12.8938 24.8775C13.4784 26.7297 14.3271 28.4878 15.4138 30.0975C13.1298 29.4835 11.0837 28.1958 9.54217 26.4021H9.54397ZM21.5068 30.0885C22.5867 28.4861 23.4316 26.7374 24.016 24.8955C25.1832 25.281 26.3071 25.7871 27.3694 26.4057C25.8277 28.1931 23.7846 29.4761 21.505 30.0885H21.5068Z"
+                fill="#8796A1"
+              ></path>
+            </svg>
+          </div>
+          <span class="menu-text">Explore</span>
+        </div>
+  
+        <div class="menu-item">
+          <div class="icon-container">
+            <svg
+              width="37"
+              height="37"
+              viewBox="0 0 37 37"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon-svg"
+            >
+              <path
+                d="M18.4556 3.72266C10.19 3.72266 3.45621 10.4583 3.45621 18.7221C3.45621 19.8777 3.59121 20.9865 3.83061 22.0665L5.63061 21.3321L6.65121 20.9127C6.53061 20.2071 6.45681 19.4727 6.45681 18.7221C6.45681 12.1071 11.8424 6.72146 18.4574 6.72146C25.0724 6.72146 30.458 12.1071 30.458 18.7221C30.458 25.3371 25.0724 30.7227 18.4574 30.7227C17.7068 30.7227 16.9724 30.6471 16.2668 30.5283L15.8474 31.5489L15.113 33.3489C16.193 33.5883 17.3036 33.7233 18.4574 33.7233C26.723 33.7233 33.4568 26.9877 33.4568 18.7239C33.4568 10.4601 26.7212 3.72266 18.4556 3.72266ZM18.4556 10.4727C13.9106 10.4727 10.2062 14.1771 10.2062 18.7221C10.2062 18.9615 10.2206 19.2027 10.2512 19.4277L11.2718 19.0083L13.2374 18.1983C13.493 15.5433 15.743 13.4733 18.4574 13.4733C21.3518 13.4733 23.708 15.8277 23.708 18.7239C23.708 21.4383 21.638 23.6883 18.983 23.9439L18.173 25.9239L17.7536 26.9283C17.9786 26.9589 18.218 26.9733 18.4592 26.9733C23.0042 26.9733 26.7086 23.2689 26.7086 18.7239C26.7086 14.1789 23.0042 10.4745 18.4592 10.4745L18.4556 10.4727ZM18.6662 18.8121L16.6718 23.6415L16.0868 25.0671L15.5324 26.4315L14.9474 27.8265L14.0924 29.8965L13.763 30.6921L12.953 32.6721L12.6236 33.4515L11.6336 35.8365C11.603 35.9265 11.513 35.9715 11.423 35.9715C11.333 35.9715 11.2574 35.9265 11.2124 35.8365L9.35301 31.7271L8.55741 29.9865L8.16681 29.1171C8.158 29.0931 8.14411 29.0714 8.12608 29.0534C8.10806 29.0354 8.08633 29.0215 8.06241 29.0127L7.19301 28.6221L5.43801 27.8265L1.34301 25.9671C1.16301 25.8771 1.16301 25.6215 1.34301 25.5477L3.72801 24.5577L4.50741 24.2283L6.50181 23.4183L7.28121 23.0889L9.35121 22.2339L10.7462 21.6633L12.1268 21.0927L13.5362 20.5077L18.3656 18.5133C18.3962 18.4989 18.425 18.4827 18.4556 18.4827C18.6212 18.4827 18.74 18.6483 18.6662 18.8121Z"
+                fill="#8796A1"
+              ></path>
+            </svg>
+          </div>
+          <span class="menu-text">Direct</span>
+        </div>
+  
+        <div class="menu-item">
+          <div class="icon-container">
+            <svg
+              width="37"
+              height="37"
+              viewBox="0 0 37 37"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon-svg"
+            >
+              <path
+                d="M18.4413 4.32129C10.4925 4.32129 4.05566 10.7725 4.05566 18.7213C4.05566 26.6701 10.4925 33.1213 18.4413 33.1213C26.4045 33.1213 32.8557 26.6701 32.8557 18.7213C32.8557 10.7725 26.4045 4.32129 18.4413 4.32129ZM22.261 23.479C17.5407 20.6467 17.1057 20.6399 17.1057 19.6213V11.5213H19.8057V18.857L23.6503 21.1635L22.261 23.479Z"
+                fill="#8796A1"
+              ></path>
+            </svg>
+          </div>
+          <span class="menu-text">Best Time to Travel</span>
+        </div>
+  
+        <div class="menu-item">
+          <div class="icon-container">
+            <svg
+              width="37"
+              height="37"
+              viewBox="0 0 37 37"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon-svg"
+            >
+              <path
+                d="M14.5284 8.28188H22.3829V10.8919H25.0012V8.25578C25.0012 6.82946 23.84 5.67188 22.4079 5.67188H14.5036C13.0715 5.67188 11.9103 6.82946 11.9103 8.25578V10.8919H14.5286L14.5284 8.28188ZM4.05566 12.1969V29.1619C4.05566 30.6026 5.22854 31.7719 6.67376 31.7719H30.2374C31.6826 31.7719 32.8555 30.6026 32.8555 29.1619V12.1969H4.05566Z"
+                fill="#8796A1"
+              ></path>
+            </svg>
+          </div>
+          <span class="menu-text">KAYAK for Busin…</span>
+          <span class="badge">NEW</span>
+        </div>
+  
+        <!-- Divider -->
+        <div class="divider"></div>
+  
+        <!-- User settings section -->
+        <div class="menu-item">
+          <div class="icon-container">
+            <svg
+              width="37"
+              height="37"
+              viewBox="0 0 37 37"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon-svg"
+            >
+              <path
+                d="M32.2336 6.7457C30.6838 5.1563 28.6102 4.2275 26.4214 4.1303C22.546 3.9557 19.9306 6.3011 18.5158 8.1209C17.101 6.2993 14.4856 3.9557 10.6102 4.1303C8.40155 4.2275 6.34775 5.1563 4.79795 6.7457C3.22835 8.3531 2.37695 10.4465 2.37695 12.6551C2.37695 16.1237 4.35335 20.0369 8.22875 24.2795C11.3086 27.6509 14.041 30.2465 16.5592 32.2427C17.1406 32.6891 17.8372 32.9213 18.5158 32.9213C19.1944 32.9213 19.891 32.6891 20.4724 32.2427C23.0104 30.2465 25.723 27.6509 28.8028 24.2795C32.6782 20.0369 34.6546 16.1219 34.6546 12.6551C34.6546 10.4465 33.8014 8.3531 32.2318 6.7457H32.2336Z"
+                fill="#8796A1"
+              ></path>
+            </svg>
+          </div>
+          <span class="menu-text">Trips</span>
+        </div>
+  
+        <!-- Divider -->
+        <div class="divider"></div>
+  
+        <!-- Language and currency section -->
+        <div class="menu-item">
+          <div class="icon-container">
+            <div class="flag-container">
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/0f2719aa06aba58b694388603c292778fb692363?placeholderIfAbsent=true" alt="Flag" class="flag-icon">
+            </div>
+          </div>
+          <span class="menu-text">English</span>
+        </div>
+  
+        <div class="menu-item">
+          <span class="currency-symbol">₹</span>
+          <span class="menu-text">Indian rupee</span>
+        </div>
+  
+        <div class="menu-item">
+          <div class="icon-container">
+            <svg
+              width="37"
+              height="37"
+              viewBox="0 0 37 37"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon-svg"
+            >
+              <path
+                d="M29.9458 5.78321H7.00305C6.2414 5.79025 5.51295 6.09594 4.97436 6.63452C4.43578 7.17311 4.13009 7.90156 4.12305 8.66321V25.7974C4.12373 26.1782 4.19993 26.5551 4.34723 26.9063C4.49452 27.2574 4.71 27.5759 4.98119 27.8432C5.25237 28.1105 5.57388 28.3214 5.92711 28.4637C6.28034 28.606 6.65828 28.6768 7.03905 28.672L11.287 28.636L14.6386 34.4608L18.0262 28.582H29.9278C30.6873 28.5787 31.4147 28.2755 31.9517 27.7385C32.4888 27.2015 32.7919 26.4741 32.7952 25.7146V8.63261C32.7957 8.25828 32.7223 7.88755 32.5793 7.54163C32.4363 7.19571 32.2264 6.8814 31.9617 6.61672C31.6971 6.35203 31.3827 6.14217 31.0368 5.99914C30.6909 5.85611 30.3202 5.78273 29.9458 5.78321ZM10.9468 24.0478L11.9332 19.924L21.0556 10.9996L23.9356 13.813C13.1518 24.37 16.0912 22.327 10.9468 24.0478ZM25.3738 12.4144C24.7294 13.0426 25.4278 13.4008 22.006 10.0744L22.4884 9.60821C24.4072 7.73801 27.2764 10.5514 25.3738 12.4144Z"
+                fill="#8796A1"
+              ></path>
+            </svg>
+          </div>
+          <span class="menu-text">Feedback</span>
+        </div>
+    </nav>
+
+    <main class="main-content">
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <div class="hero-background">
+          <div class="hero-container">
+            <div class="hero-content">
+              <div class="hero-left-column">
+                <div class="hero-text-container">
+                  <h1 class="hero-heading">Compare flight deals from 100s of sites<span class="orange-dot">.</span></h1>
+
+                  <nav class="travel-options-nav">
+                    <ul class="travel-options-menu">
+                      <li class="travel-option-item">
+                        <a href="#" class="travel-option-link active-travel">
+                          <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/8250c0c54ade27e232b4f5d8073825a59eaf261b?placeholderIfAbsent=true" alt="Flights" class="travel-option-icon">
+                        </a>
+                        <span class="travel-option-text">Flights</span>
+                      </li>
+                      <li class="travel-option-item">
+                        <a href="#" class="travel-option-link">
+                          <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/a71cb153237c8281f4be900d9829aab84021126c?placeholderIfAbsent=true" alt="Stays" class="travel-option-icon">
+                        </a>
+                        <span class="travel-option-text">Stays</span>
+                      </li>
+                      <li class="travel-option-item">
+                        <a href="#" class="travel-option-link">
+                          <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/66498a326358b3aa6486a520e658d76348dd3f20?placeholderIfAbsent=true" alt="Car Rental" class="travel-option-icon">
+                        </a>
+                        <span class="travel-option-text">Car Rental</span>
+                      </li>
+                      <li class="travel-option-item">
+                        <a href="#" class="travel-option-link">
+                          <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/5fbbbfcc9dcc1cdaec62dd99385d2b4d2413253b?placeholderIfAbsent=true" alt="Flight+Hotel" class="travel-option-icon">
+                        </a>
+                        <span class="travel-option-text">Flight+Hotel</span>
+                      </li>
+                      <li class="travel-option-item">
+                        <a href="#" class="travel-option-link">
+                          <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/f86d2420e349699b32c8da97603fcf6a4e64474a?placeholderIfAbsent=true" alt="KAYAK.ai" class="travel-option-icon">
+                        </a>
+                        <span class="travel-option-text">KAYAK.ai</span>
+                      </li>
+                    </ul>
+                  </nav>
+
+                  <div class="search-container">
+                    <div class="trip-type-selector">
+                      <div class="trip-type-dropdown">
+                        <div class="trip-type-text">Return</div>
+                        <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/1583e136b90c07a2e23c4518d9f026f4f99c3b4f?placeholderIfAbsent=true" alt="Dropdown" class="dropdown-icon">
+                      </div>
+                    </div>
+
+                    <div class="search-form">
+                      <div class="search-form-locations">
+                        <div class="origin-input-wrapper">
+                          <div class="location-tag">
+                            <span class="location-text">Chennai (MAA)</span>
+                            <button class="remove-location-button">
+                              <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/7ea463acc2592b2a8746a2796726a39a6e7ba458?placeholderIfAbsent=true" alt="Remove" class="remove-icon">
+                            </button>
+                          </div>
+                          <input type="text" class="location-input" placeholder="From?">
+                        </div>
+
+                        <div class="destination-input-wrapper">
+                          <div class="location-tag">
+                            <span class="location-text">Bengaluru (BLR)</span>
+                            <button class="remove-location-button">
+                              <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/5e720d228745d110a0c0468558280989200e8ac4?placeholderIfAbsent=true" alt="Remove" class="remove-icon">
+                            </button>
+                          </div>
+                          <input type="text" class="location-input" placeholder="To?">
+                        </div>
+
+                        <div class="location-divider"></div>
+                        <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/9437e724fa0870ed5973cf8cc626b086a72f6660?placeholderIfAbsent=true" alt="Swap" class="swap-icon">
+                      </div>
+
+                      <div class="search-form-dates">
+                        <div class="dates-container">
+                          <button class="departure-date-button">
+                            <span class="date-text">Mon 5/5</span>
+                          </button>
+                          <div class="AmJm-divider"><div aria-hidden="true" class="bJmK bJmK-mod-position-absolute">–</div></div>
+                          <button class="return-date-button">
+                            <span class="date-text">Mon 12/5</span>
+                          </button>
+                        </div>
+                        <div class="dates-divider"></div>
+                      </div>
+
+                      <div class="search-form-travelers">
+                        <div class="travelers-dropdown">
+                          <span class="travelers-text">1 adult, Economy</span>
+                        </div>
+                        <div class="travelers-divider"></div>
+
+                        <button class="search-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/9d2b316cf33cfc66de0dd2c7b879d8a76f2350ee?placeholderIfAbsent=true" alt="Search" class="search-again-icon">
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="search-options">
+                      <div class="search-options-left">
+                        <span class="compare-text">Compare vs KAYAK</span>
+                        <div class="compare-options">
+                          <div class="compare-option">
+                            <input type="checkbox" class="compare-checkbox" id="kayak-checkbox">
+                            <span class="compare-label">Agoda</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="direct-flights-option">
+                        <input type="checkbox" class="direct-flights-checkbox" id="direct-flights-checkbox">
+                        <label class="direct-flights-label">Direct flights only</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div class="hero-right-column">
+                <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/3dc73d5ea36c16550806203f6940c34e9b6f5915?placeholderIfAbsent=true" alt="Travel illustration" class="hero-image">
+              </div> -->
+
+                <div class="hero-right-column">
+                    <div class="hero-grid grid-animate-down">
+                        <img class="Ez1T" loading="lazy" width="220" height="220" src="https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Flights_01_2x.png?v=c63fc2fd5820d4ea1d82fd91e1545f6f626e130b&amp;cluster=5" srcset="https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Flights_01_1_5x.png?v=ee132853b57d2270721b02045fff91244493846c&amp;cluster=5 1.5x, https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Flights_01_2x.png?v=c63fc2fd5820d4ea1d82fd91e1545f6f626e130b&amp;cluster=5 2x, https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Flights_01_3x.png?v=99ec078e9edd91136962429efc023dd61ff85b71&amp;cluster=5 3x" alt="" aria-hidden="true">
+                        <img class="Ez1T" loading="lazy" width="220" height="220" src="https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Flights_02_2x.png?v=55e061076d15cf104d606833e52e3b8b8f95d22e&amp;cluster=5" srcset="https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Flights_02_1_5x.png?v=cf84817d025f9ddb844f88149ffa1a5e58de9f60&amp;cluster=5 1.5x, https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Flights_02_2x.png?v=55e061076d15cf104d606833e52e3b8b8f95d22e&amp;cluster=5 2x, https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Flights_02_3x.png?v=894fbdbcfb5f19f48f19cf1ff9032480dcb094c8&amp;cluster=5 3x" alt="" aria-hidden="true">
+                        <img class="Ez1T" loading="lazy" width="220" height="220" src="https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Generic_02_2x.png?v=ba7aeb7b1c23751038c3b4c59ca381cd0032ac1c&amp;cluster=5" srcset="https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Generic_02_1_5x.png?v=02bc3a5dbe4926c4c3588862d8c12b1d989bdb78&amp;cluster=5 1.5x, https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Generic_02_2x.png?v=ba7aeb7b1c23751038c3b4c59ca381cd0032ac1c&amp;cluster=5 2x, https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Generic_02_3x.png?v=4402a31dcafa93bcaf78a35f100af4c1ac8b4501&amp;cluster=5 3x" alt="" aria-hidden="true">
+                        <img class="Ez1T" loading="lazy" width="220" height="220" src="https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Generic_03_2x.png?v=8191819ab059d3458d1700ecd256d1d1812eb80c&amp;cluster=5" srcset="https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Generic_03_1_5x.png?v=4118e2a392f8c4acb7cbc745f6615157da662f55&amp;cluster=5 1.5x, https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Generic_03_2x.png?v=8191819ab059d3458d1700ecd256d1d1812eb80c&amp;cluster=5 2x, https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Generic_03_3x.png?v=c7e8e85b4ef0515c94402b43df9bf9cefb375c8a&amp;cluster=5 3x" alt="" aria-hidden="true">
+                    </div>
+                    <div class="hero-grid grid-animate-up">
+                        <img class="Ez1T" loading="lazy" width="220" height="220" src="https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Generic_01_2x.png?v=97b6f923c92c17d895d8dab7b22bb9b81d68fa61&amp;cluster=5" srcset="https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Generic_01_1_5x.png?v=ad5ffa298483d8ec5f4f42aa910d89ceef3db8ea&amp;cluster=5 1.5x, https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Generic_01_2x.png?v=97b6f923c92c17d895d8dab7b22bb9b81d68fa61&amp;cluster=5 2x, https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Generic_01_3x.png?v=3364f23fc8849f8c090a3f251237fa6285bd06e1&amp;cluster=5 3x" alt="" aria-hidden="true">
+                        <img class="Ez1T" loading="lazy" width="220" height="220" src="https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Flights_03_2x.png?v=f5faff490ef955431dce4b3971c0356c0aadf2be&amp;cluster=5" srcset="https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Flights_03_1_5x.png?v=a99eeafc7a4a5bb32ef2fddbf0238a10f747b07b&amp;cluster=5 1.5x, https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Flights_03_2x.png?v=f5faff490ef955431dce4b3971c0356c0aadf2be&amp;cluster=5 2x, https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Flights_03_3x.png?v=94657ed227b4fa024d28c2ba2fb69d7f84f6a880&amp;cluster=5 3x" alt="" aria-hidden="true">
+                        <img class="Ez1T" loading="lazy" width="220" height="220" src="https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Flights_04_2x.png?v=a4d2604f37ecaad8abc4ad6e005520d0e3660224&amp;cluster=5" srcset="https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Flights_04_1_5x.png?v=6c928ab74ec32cead4649a6021313649d19d34f0&amp;cluster=5 1.5x, https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Flights_04_2x.png?v=a4d2604f37ecaad8abc4ad6e005520d0e3660224&amp;cluster=5 2x, https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Flights_04_3x.png?v=f87abc9b4334985e667e207b653308736d7ddede&amp;cluster=5 3x" alt="" aria-hidden="true">
+                        <img class="Ez1T" loading="lazy" width="220" height="220" src="https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Generic_04_2x.png?v=ad3bc833cd4b03907f7fdb6ca356d0c9b6f7a228&amp;cluster=5" srcset="https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Generic_04_1_5x.png?v=d4618803b34303214c8a02de60139924b4d20ad2&amp;cluster=5 1.5x, https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Generic_04_2x.png?v=ad3bc833cd4b03907f7fdb6ca356d0c9b6f7a228&amp;cluster=5 2x, https://content.r9cdn.net/res/images/horizon/ui/horizontalSearchNavigation/Generic_04_3x.png?v=94c41a196c3dab4da9c8e9f777d08ee8dd1ea316&amp;cluster=5 3x" alt="" aria-hidden="true">
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recent Searches Section -->
+      <section class="recent-searches-section">
+        <div class="section-container">
+          <header class="section-header">
+            <h2 class="section-title">Your recent searches</h2>
+          </header>
+
+          <div class="search-cards-container">
+            <article class="search-card">
+              <div class="search-card-content">
+                <div class="search-card-header">
+                  <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/491e7a6bb0649852f614727020763c7bb7fc5473?placeholderIfAbsent=true" alt="Flight" class="search-card-icon">
+                  <div class="search-route">
+                    <div class="search-origin">
+                      <span>Chennai</span>
+                      <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/33ff5f6c9b46b86d55eafe7e7511b0e927c1584a?placeholderIfAbsent=true" alt="Arrow" class="route-arrow">
+                    </div>
+                    <div class="search-destination">
+                      <span>Bengaluru</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="search-card-details">
+                  <div class="search-dates">
+                    <span>Mon 5/5</span>
+                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/244bc3160f1710d09bdad213f9d18db817b64821?placeholderIfAbsent=true" alt="Arrow" class="date-arrow">
+                    <span>Mon 12/5</span>
+                  </div>
+                  <div class="search-travelers">1 traveller, Economy</div>
+                  <div class="search-type">Return</div>
+                </div>
+
+                <div class="search-card-footer">
+                    <div class="search-price-container">
+                        <div class="search-price">₹ 4,637</div>
+                        <div class="old-price">Was ₹ 5,396</div>
+                    </div> 
+                  <button class="search-again-button">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/9d2b316cf33cfc66de0dd2c7b879d8a76f2350ee?placeholderIfAbsent=true" alt="Search" class="search-again-icon">
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="search-card">
+              <div class="search-card-content">
+                <div class="search-card-header">
+                  <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/491e7a6bb0649852f614727020763c7bb7fc5473?placeholderIfAbsent=true" alt="Flight" class="search-card-icon">
+                  <div class="search-route">
+                    <div class="search-origin">
+                      <span>Chennai</span>
+                      <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/feccc9fade6d2ca792989564764df7ebce352199?placeholderIfAbsent=true" alt="Arrow" class="route-arrow">
+                    </div>
+                    <div class="search-destination">
+                      <span>Tiruchirappalli</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="search-card-details">
+                  <div class="search-dates">
+                    <span>Thu 8/5</span>
+                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/244bc3160f1710d09bdad213f9d18db817b64821?placeholderIfAbsent=true" alt="Arrow" class="date-arrow">
+                    <span>Mon 12/5</span>
+                  </div>
+                  <div class="search-travelers">1 traveller, Economy</div>
+                  <div class="search-type">Return</div>
+                </div>
+
+                <div class="search-card-footer">
+                  <div class="search-price-container">
+                    <div class="search-price">₹ 4,637</div>
+                    <div class="old-price">Was ₹ 5,396</div>
+                  </div>  
+                  <button class="search-again-button">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/9d2b316cf33cfc66de0dd2c7b879d8a76f2350ee?placeholderIfAbsent=true" alt="Search" class="search-again-icon">
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="new-search-card">
+              <div class="new-search-content">
+                <div class="new-search-icon-wrapper">
+                  <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/39d2ce7e52410a0fa3ccf081d1a9a7ac24c8c11b?placeholderIfAbsent=true" alt="Plus" class="new-search-icon">
+                </div>
+                <h3 class="new-search-title">Start a new search</h3>
+                <div class="new-search-options">
+                  <a href="#" class="new-search-option">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/7a282242ff4ffab809553d4c0d3f725776e5ba0e?placeholderIfAbsent=true" alt="Flights" class="option-icon">
+                  </a>
+                  <a href="#" class="new-search-option">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/57201b354d66f306e6ad7778ee48b6780beae6f9?placeholderIfAbsent=true" alt="Hotels" class="option-icon">
+                  </a>
+                  <a href="#" class="new-search-option">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c2b6568e66d75990cb83aaeddf8a84cb05d01878?placeholderIfAbsent=true" alt="Cars" class="option-icon">
+                  </a>
+                  <a href="#" class="new-search-option">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/6a3bdcdde5bc7f2afc364cb28578cf8440c55016?placeholderIfAbsent=true" alt="Packages" class="option-icon">
+                  </a>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Travel Deals Section -->
+      <section class="travel-deals-section">
+        <div class="section-container">
+          <header class="section-header">
+            <h2 class="section-title">Travel deals under ₹ 6,916</h2>
+            <div class="explore-more-link-wrapper">
+              <a href="#" class="explore-more-link">
+                <span>Explore more</span>
+                <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/6c4dae3e66e6ea5c5709e41fc5ac7b590de5f8b4?placeholderIfAbsent=true" alt="Arrow" class="explore-arrow">
+              </a>
+            </div>
+          </header>
+
+          <div class="deals-container">
+            <div class="swiper deals-swiper shadow-container">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                  <article class="deal-card">
+                    <a href="#" class="deal-card-link">
+                      <div class="deal-image-container">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/b747422906170b2ef36062b5282352a016c47184?placeholderIfAbsent=true" alt="Tiruchirappalli" class="deal-image">
+                      </div>
+                      <div class="deal-details">
+                        <h3 class="deal-destination">Tiruchirappalli</h3>
+                        <div class="deal-info">
+                          <div class="deal-duration">1h, direct</div>
+                          <div class="deal-dates">
+                            <span>Thu 8/5</span>
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/d6bc00f324da4b530c633dd2f2643da5500e8392?placeholderIfAbsent=true" alt="Arrow" class="date-arrow">
+                            <span>Mon 12/5</span>
+                          </div>
+                        </div>
+                        <div class="deal-price">from ₹ 4,696</div>
+                      </div>
+                    </a>
+                  </article>
+                </div>
+                <div class="swiper-slide">
+                  <article class="deal-card">
+                    <a href="#" class="deal-card-link">
+                      <div class="deal-image-container">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/1168fca1960a8871ec6f76e71be0314f78ad74e7?placeholderIfAbsent=true" alt="Shimoga" class="deal-image">
+                      </div>
+                      <div class="deal-details">
+                        <h3 class="deal-destination">Shimoga</h3>
+                        <div class="deal-info">
+                          <div class="deal-duration">1h 30m, direct</div>
+                          <div class="deal-dates">
+                            <span>Sat 3/5</span>
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/d6bc00f324da4b530c633dd2f2643da5500e8392?placeholderIfAbsent=true" alt="Arrow" class="date-arrow">
+                            <span>Tue 6/5</span>
+                          </div>
+                        </div>
+                        <div class="deal-price">from ₹ 4,696</div>
+                      </div>
+                    </a>
+                  </article>
+                </div>
+                <div class="swiper-slide">
+                  <article class="deal-card">
+                    <a href="#" class="deal-card-link">
+                      <div class="deal-image-container">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/7cd2190559b26bd4d203d02045660c991349b6da?placeholderIfAbsent=true" alt="Bengaluru" class="deal-image">
+                      </div>
+                      <div class="deal-details">
+                        <h3 class="deal-destination">Bengaluru</h3>
+                        <div class="deal-info">
+                          <div class="deal-duration">1h 10m, direct</div>
+                          <div class="deal-dates">
+                            <span>Fri 16/5</span>
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/d6bc00f324da4b530c633dd2f2643da5500e8392?placeholderIfAbsent=true" alt="Arrow" class="date-arrow">
+                            <span>Mon 19/5</span>
+                          </div>
+                        </div>
+                        <div class="deal-price">from ₹ 5,378</div>
+                      </div>
+                    </a>
+                  </article>
+                </div>
+                <div class="swiper-slide">
+                  <article class="deal-card">
+                    <a href="#" class="deal-card-link">
+                      <div class="deal-image-container">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/15792690b2a5932469e919928c7537d443e5abdb?placeholderIfAbsent=true" alt="Kochi" class="deal-image">
+                      </div>
+                      <div class="deal-details">
+                        <h3 class="deal-destination">Kochi</h3>
+                        <div class="deal-info">
+                          <div class="deal-duration">1h 25m, direct</div>
+                          <div class="deal-dates">
+                            <span>Sat 3/5</span>
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/d6bc00f324da4b530c633dd2f2643da5500e8392?placeholderIfAbsent=true" alt="Arrow" class="date-arrow">
+                            <span>Wed 7/5</span>
+                          </div>
+                        </div>
+                        <div class="deal-price">from ₹ 5,805</div>
+                      </div>
+                    </a>
+                  </article>
+                </div>
+                <div class="swiper-slide">
+                    <article class="deal-card">
+                      <a href="#" class="deal-card-link">
+                        <div class="deal-image-container">
+                          <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/b747422906170b2ef36062b5282352a016c47184?placeholderIfAbsent=true" alt="Tiruchirappalli" class="deal-image">
+                        </div>
+                        <div class="deal-details">
+                          <h3 class="deal-destination">Tiruchirappalli</h3>
+                          <div class="deal-info">
+                            <div class="deal-duration">1h, direct</div>
+                            <div class="deal-dates">
+                              <span>Thu 8/5</span>
+                              <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/d6bc00f324da4b530c633dd2f2643da5500e8392?placeholderIfAbsent=true" alt="Arrow" class="date-arrow">
+                              <span>Mon 12/5</span>
+                            </div>
+                          </div>
+                          <div class="deal-price">from ₹ 4,696</div>
+                        </div>
+                      </a>
+                    </article>
+                  </div>
+                  <div class="swiper-slide">
+                    <article class="deal-card">
+                      <a href="#" class="deal-card-link">
+                        <div class="deal-image-container">
+                          <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/1168fca1960a8871ec6f76e71be0314f78ad74e7?placeholderIfAbsent=true" alt="Shimoga" class="deal-image">
+                        </div>
+                        <div class="deal-details">
+                          <h3 class="deal-destination">Shimoga</h3>
+                          <div class="deal-info">
+                            <div class="deal-duration">1h 30m, direct</div>
+                            <div class="deal-dates">
+                              <span>Sat 3/5</span>
+                              <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/d6bc00f324da4b530c633dd2f2643da5500e8392?placeholderIfAbsent=true" alt="Arrow" class="date-arrow">
+                              <span>Tue 6/5</span>
+                            </div>
+                          </div>
+                          <div class="deal-price">from ₹ 4,696</div>
+                        </div>
+                      </a>
+                    </article>
+                  </div>
+              </div>
+
+              <div class="scroll-controls">
+                <div class="scroll-buttons">
+                  <button class="scroll-left-button">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/54ec8c33e2e3d2e58a12e1dfa5da83aab1c88834?placeholderIfAbsent=true" alt="Scroll left" class="scroll-icon">
+                  </button>
+                  <button class="scroll-right-button">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/5d261bfc12fc639f6df05fc1521791ce0ce82e85?placeholderIfAbsent=true" alt="Scroll right" class="scroll-icon">
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Travel Pros Section -->
+      <section class="travel-pros-section">
+        <div class="section-container">
+          <header class="section-header">
+            <h2 class="section-title">For travel pros</h2>
+          </header>
+
+          <div class="pros-container">
+            <div class="swiper pros-swiper shadow-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <article class="pro-card">
+                            <a href="#" class="pro-card-link">
+                                <div class="pro-card-content">
+                                    <h3 class="pro-title">
+                                        <span class="pro-title-text">KAYAK.ai</span>
+                                        <span class="beta-badge">BETA</span>
+                                    </h3>
+                                    <p class="pro-description">Get travel questions answered</p>
+                                </div>
+                                <figure class="pro-image-container">
+                                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/e4c683a1a0ada3fa39baf30f81997f536f65c3a6?placeholderIfAbsent=true" alt="KAYAK.ai" class="pro-image">
+                                </figure>
+                            </a>
+                        </article>
+                    </div>
+                    <div class="swiper-slide">
+                        <article class="pro-card">
+                            <a href="#" class="pro-card-link">
+                                <div class="pro-card-content">
+                                    <h3 class="pro-title">Best Time to Travel</h3>
+                                    <p class="pro-description">Know when to save</p>
+                                </div>
+                                <figure class="pro-image-container">
+                                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/ebf618066376f75fec1cefc275da1c20f0cd9667?placeholderIfAbsent=true" alt="Best Time to Travel" class="pro-image">
+                                </figure>
+                            </a>
+                        </article>
+                    </div>
+                    <div class="swiper-slide">
+                        <article class="pro-card">
+                            <a href="#" class="pro-card-link">
+                                <div class="pro-card-content">
+                                    <h3 class="pro-title">Explore</h3>
+                                    <p class="pro-description">See destinations on your budget</p>
+                                </div>
+                                <figure class="pro-image-container">
+                                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/768a719f78e9c845e0ae96a651519c9385815152?placeholderIfAbsent=true" alt="Explore" class="pro-image">
+                                </figure>
+                            </a>
+                        </article>
+                    </div>
+                    <div class="swiper-slide">
+                        <article class="pro-card">
+                            <a href="#" class="pro-card-link">
+                                <div class="pro-card-content">
+                                    <h3 class="pro-title">Trips</h3>
+                                    <p class="pro-description">Keep all your plans in one place</p>
+                                </div>
+                                <figure class="pro-image-container">
+                                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/2bacee40707c6cc1174268da1f119059f2bfddb2?placeholderIfAbsent=true" alt="Trips" class="pro-image">
+                                </figure>
+                            </a>
+                        </article>
+                    </div>
+                    <div class="swiper-slide">
+                        <article class="pro-card">
+                            <a href="#" class="pro-card-link">
+                                <div class="pro-card-content">
+                                    <h3 class="pro-title">Price Alerts</h3>
+                                    <p class="pro-description">Know when prices change</p>
+                                </div>
+                                <figure class="pro-image-container">
+                                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/e4c683a1a0ada3fa39baf30f81997f536f65c3a6?placeholderIfAbsent=true" alt="KAYAK.ai" class="pro-image">
+                                </figure>
+                            </a>
+                        </article>
+                    </div>
+                    <div class="swiper-slide">
+                        <article class="pro-card">
+                            <a href="#" class="pro-card-link">
+                                <div class="pro-card-content">
+                                    <h3 class="pro-title">Flight Tracker</h3>
+                                    <p class="pro-description">See real-time delays</p>
+                                </div>
+                                <figure class="pro-image-container">
+                                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/768a719f78e9c845e0ae96a651519c9385815152?placeholderIfAbsent=true" alt="Explore" class="pro-image">
+                                </figure>
+                            </a>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="scroll-controls">
+                    <div class="scroll-buttons">
+                        <button class="scroll-left-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/54ec8c33e2e3d2e58a12e1dfa5da83aab1c88834?placeholderIfAbsent=true" alt="Scroll left" class="scroll-icon">
+                        </button>
+                        <button class="scroll-right-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/5d261bfc12fc639f6df05fc1521791ce0ce82e85?placeholderIfAbsent=true" alt="Scroll right" class="scroll-icon">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </section>
+
+      <!-- Travel Planning Section -->
+      <section class="travel-planning-section">
+        <div class="planning-container">
+          <div class="planning-content">
+            <h2 class="planning-subtitle">Start your travel planning here</h2>
+            <h1 class="planning-title">
+              <span>Search </span>
+              <a href="#" class="planning-link">Flights</a>
+              <span>, </span>
+              <a href="#" class="planning-link">Hotels</a>
+              <span>& </span>
+              <a href="#" class="planning-link">Hire Cars</a>
+            </h1>
+
+            <div class="destinations-grid">
+
+              <div class="destinations-column">
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">London</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">Toronto</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">Melbourne</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">San Francisco</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">New York</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">Dallas</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+              </div>
+
+              <div class="destinations-column">
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">London</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">Toronto</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">Melbourne</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">San Francisco</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">New York</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">Dallas</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+              </div>
+
+              <div class="destinations-column">
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">London</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">Toronto</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">Melbourne</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">San Francisco</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">New York</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="destination-item">
+                    <div class="destination-accordion">
+                        <div class="destination-header">
+                            <h3 class="destination-name">Dallas</h3>
+                            <button class="view-more-button">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4fa54a5d4a8d96d6778e078e6be1ac4e76c90a5?placeholderIfAbsent=true" alt="View more" class="view-more-icon">
+                            </button>
+                        </div>
+                        <div class="destination-links">
+                            <a href="#" class="destination-link">CARS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">FLIGHTS</a>
+                            <span class="dot-separator">• </span>
+                            <a href="#" class="destination-link">HOTELS</a>
+                        </div>
+                    </div>  
+                    <div class="destination-dropdown" aria-hidden="false">
+                        <ul class="dropdown-list">
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Nx London Hostel</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;1,971+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Book A Bed Hostels</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,071+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Palmers Lodge Swiss Cottage</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,303+</span>
+                                </a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="/" class="dropdown-item-link">
+                                    <span class="P_Ok-sublink-text">Safestay London Elephant &amp; Castle</span>
+                                    <span class="P_Ok-sublink-price">₹&nbsp;2,890+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="faq-section">
+                <h2 class="faq-title">Frequently asked questions about KAYAK</h2>
+                <ul class="faq-list">
+                    <li class="faq-item">
+                        <summary class="faq-question">
+                            <h4 class="question-text">How do I find travel deals on KAYAK?</h4>
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/2699d8d9eca638ab6cfa0e1de2d1dc7de9d6fafb?placeholderIfAbsent=true" alt="Expand" class="expand-icon">
+                        </summary>
+                        <p class="faq-answer">
+                            Simply use one of our travel search engines to scan for prices gathered from hundreds of travel sites. KAYAK's search results pages have loads of filter options to help you find deals, discover exactly what you're looking for and make booking seamless. Plus, there's no extra fee from KAYAK.
+                        </p>
+                    </li>
+            
+                    <li class="faq-item">
+                        <summary class="faq-question">
+                            <h4 class="question-text">What makes KAYAK a great travel app?</h4>
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/2699d8d9eca638ab6cfa0e1de2d1dc7de9d6fafb?placeholderIfAbsent=true" alt="Expand" class="expand-icon">
+                        </summary>
+                        <p class="faq-answer">
+                            The KAYAK app puts all our flight, hotel and car hire search tools in your pocket. Find great deals, set Price Alerts, access mobile-only discounts and enjoy useful travel tools like flight tracking, price forecasts and more - all on the go.
+                        </p>
+                    </li>
+            
+                    <li class="faq-item">
+                        <summary class="faq-question">
+                            <h4 class="question-text">How can I use KAYAK to manage my travel bookings?</h4>
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/ef6ef7a4ff9f1ecaece4e9b36a41cf75117ec99b?placeholderIfAbsent=true" alt="Expand" class="expand-icon">
+                        </summary>
+                        <p class="faq-answer">
+                            Create a free KAYAK account or download our app to access Trips - your personal travel planner. Forward your booking confirmations to trips@kayak.com and we'll organize all your plans in one place. Share itineraries, get notifications about delays and gate changes, and access helpful tools like maps and weather forecasts.
+                        </p>
+                    </li>
+            
+                    <li class="faq-item">
+                        <summary class="faq-question">
+                            <h4 class="question-text">What are KAYAK Price Alerts?</h4>
+                            <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/ef6ef7a4ff9f1ecaece4e9b36a41cf75117ec99b?placeholderIfAbsent=true" alt="Expand" class="expand-icon">
+                        </summary>
+                        <p class="faq-answer">
+                            KAYAK Price Alerts are a free tool that tracks prices for specific flights, hotels or car hires. Set up an alert and we'll email you when the price changes or reaches the level you want. It's an easy way to monitor prices and book when the time is right.
+                        </p>
+                    </li>
+                </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Site Description Section -->
+      <section class="site-description">
+        <div class="description-container">
+          <p class="description-text">
+            <span>Search </span>
+            <a href="#" class="description-link">flights</a>
+            <span>, </span>
+            <a href="#" class="description-link">hotels</a>
+            <span>, </span>
+            <a href="#" class="description-link">hire cars</a>
+            <span>, </span>
+            <a href="#" class="description-link">travel guides</a>
+            <span>and more with KAYAK. KAYAK searches hundreds of other travel sites at once to get you the information you need to make the right decisions.</span>
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="site-footer">
+      <div class="footer-container">
+        <div class="footer-content">
+          <div class="footer-columns">
+            <div class="footer-column">
+              <h6 class="footer-heading">Company</h6>
+              <ul class="footer-links">
+                <li class="footer-link-item"><a href="#" class="footer-link">About</a></li>
+                <li class="footer-link-item"><a href="#" class="footer-link">Careers</a></li>
+                <li class="footer-link-item"><a href="#" class="footer-link">Mobile</a></li>
+                <li class="footer-link-item"><a href="#" class="footer-link">Blog</a></li>
+                <li class="footer-link-item"><a href="#" class="footer-link">How we work</a></li>
+              </ul>
+            </div>
+
+            <div class="footer-column">
+              <h6 class="footer-heading">Contact</h6>
+              <ul class="footer-links">
+                <li class="footer-link-item"><a href="#" class="footer-link">Help/FAQ</a></li>
+                <li class="footer-link-item"><a href="#" class="footer-link">Press</a></li>
+                <li class="footer-link-item"><a href="#" class="footer-link">Affiliates</a></li>
+                <li class="footer-link-item"><a href="#" class="footer-link">Hotel owners</a></li>
+                <li class="footer-link-item"><a href="#" class="footer-link">Partners</a></li>
+                <li class="footer-link-item"><a href="#" class="footer-link">Advertise with us</a></li>
+              </ul>
+            </div>
+
+            <div class="footer-column">
+              <h6 class="footer-heading">More</h6>
+              <ul class="footer-links">
+                <li class="footer-link-item"><a href="#" class="footer-link">Airline fees</a></li>
+                <li class="footer-link-item"><a href="#" class="footer-link">Airlines</a></li>
+                <li class="footer-link-item"><a href="#" class="footer-link">Low fare tips</a></li>
+              </ul>
+            </div>
+
+            <div class="footer-column">
+              <div class="app-download">
+                <h6 class="footer-heading">Get the KAYAK app</h6>
+                <div class="app-links">
+                  <a href="#" class="app-link">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/b006c285443a6cb74c56d2d79db403201d574839?placeholderIfAbsent=true" alt="Get it on Google Play" class="app-badge">
+                  </a>
+                  <a href="#" class="app-link">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/c4a1290b3810d3f64f8172a8e8a2f5649a8ba78c?placeholderIfAbsent=true" alt="Download on the App Store" class="app-badge">
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-divider"></div>
+
+          <div class="footer-bottom">
+            <div class="footer-legal">
+              <div class="copyright">©2025 KAYAK</div>
+              <div class="legal-links">
+                <a href="#" class="legal-link">Privacy</a>
+              </div>
+              <div class="legal-links">
+                <a href="#" class="legal-link">Terms & Conditions</a>
+              </div>
+            </div>
+
+            <div class="social-links">
+              <a href="#" class="social-link">
+                <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/a6295fa8039c9ac74951140ea5e1459ee06aa0f5?placeholderIfAbsent=true" alt="Facebook" class="social-icon">
+              </a>
+              <a href="#" class="social-link">
+                <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/0d01f3ac676a70b0f03d086a732426f4e3292a4e?placeholderIfAbsent=true" alt="Twitter" class="social-icon">
+              </a>
+              <a href="#" class="social-link">
+                <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/1dbcba432ef4d85723c41cfd0219172df432c6f0?placeholderIfAbsent=true" alt="YouTube" class="social-icon">
+              </a>
+              <a href="#" class="social-link">
+                <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/a01b091b2e24d527bfbb4c370f8f5a2f5dad7c2c?placeholderIfAbsent=true" alt="Instagram" class="social-icon">
+              </a>
+            </div>
+          </div>
+
+          <header class="brand-nav">
+            <nav class="logo-container">
+              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/cf2248b943eee46ce86eded44698b944dd04494d?placeholderIfAbsent=true" alt="Booking.com" class="brand-logo" />
+              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/fa02e8fc6c09f32391f10dd7e6ab6bdc90d4d177?placeholderIfAbsent=true" alt="Kayak" class="brand-logo" />
+              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/f0039f986d5e493061a64e5c112854b0277d099e?placeholderIfAbsent=true" alt="OpenTable" class="brand-logo" />
+              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/273381309ca0110767e134f52054fc123b56fcb2?placeholderIfAbsent=true" alt="Priceline" class="brand-logo" />
+              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/6202f0454d5021ffbcbf02b0fc6148d6fea79e5c?placeholderIfAbsent=true" alt="Agoda" class="brand-logo" />
+            </nav>
+            <div class="settings-container">
+              <button class="language-selector">
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/0f2719aa06aba58b694388603c292778fb692363?placeholderIfAbsent=true" alt="Flag" class="flag-icon" />
+                <span class="selector-text">English</span>
+              </button>
+              <button class="currency-selector">
+                <span class="currency-symbol">₹</span>
+                <span class="selector-text">INR</span>
+              </button>
+            </div>
+          </header>
+          
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (() => {
+      const state = {};
+
+      let context = null;
+      let nodesToDestroy = [];
+      let pendingUpdate = false;
+
+      function destroyAnyNodes() {
+        // destroy current view template refs before rendering again
+        nodesToDestroy.forEach((el) => el.remove());
+        nodesToDestroy = [];
+      }
+
+      // Function to update data bindings and loops
+      // call update() when you mutate state and need the updates to reflect
+      // in the dom
+      function update() {
+        if (pendingUpdate === true) {
+          return;
+        }
+        pendingUpdate = true;
+
+        document.querySelectorAll("[data-el='section']").forEach((el) => {
+          el.setAttribute("space", 42);
+        });
+
+        destroyAnyNodes();
+
+        pendingUpdate = false;
+      }
+
+      // Update with initial state on first load
+      update();
+    })();
+  </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Initialize deals swiper section
+            const swiper = new Swiper('.deals-swiper', {
+                slidesPerView: 'auto',
+                spaceBetween: 12,
+                grabCursor: true,
+                speed: 800,
+                navigation: {
+                    nextEl: '.scroll-right-button',
+                    prevEl: '.scroll-left-button',
+                },
+                breakpoints: {
+                    // when window width is >= 320px
+                    320: {
+                        slidesPerView: 1,
+                        slidesPerGroup: 1
+                    },
+                    // when window width is >= 768px
+                    768: {
+                        slidesPerView: 3,
+                        slidesPerGroup: 3
+                    },
+                    // when window width is >= 1024px
+                    1024: {
+                        slidesPerView: 4,
+                        slidesPerGroup: 4
+                    }
+                }
+            });
+
+            // Initialize pros swiper section
+            const prosSwiper = new Swiper('.pros-swiper', {
+                slidesPerView: 'auto',
+                spaceBetween: 12,
+                grabCursor: true,
+                speed: 800,
+                navigation: {
+                    nextEl: '.pros-container .scroll-right-button',
+                    prevEl: '.pros-container .scroll-left-button',
+                },
+                breakpoints: {
+                    320: {
+                        slidesPerView: 2,
+                        slidesPerGroup: 2
+                    },
+                    768: {
+                        slidesPerView: 3,
+                        slidesPerGroup: 3
+                    },
+                    1024: {
+                        slidesPerView: 4,
+                        slidesPerGroup: 4,
+                        spaceBetween: 16
+                    }
+                }
+            });
+
+            prosSwiper.on('slideChange', function () {
+                const leftButton = document.querySelector('.pros-container .scroll-left-button');
+                const rightButton = document.querySelector('.pros-container .scroll-right-button');
+                
+                leftButton.style.opacity = this.isBeginning ? '0.5' : '1';
+                rightButton.style.opacity = this.isEnd ? '0.5' : '1';
+            });
+        });
+
+        // FAQ Accordion functionality
+        const faqItems = document.querySelectorAll('.faq-item');
+        
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            
+            question.addEventListener('click', () => {
+                // Close other open items
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                
+                // Toggle current item
+                item.classList.toggle('active');
+            });
+        });
+
+        // Destination Accordion functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all destination accordions
+            const destinationAccordions = document.querySelectorAll('.destination-accordion');
+
+            // Add click event listener to each accordion
+            destinationAccordions.forEach(accordion => {
+                accordion.addEventListener('click', function() {
+                    // Get the parent destination-item
+                    const destinationItem = this.closest('.destination-item');
+                    
+                    // Toggle active class on the clicked item
+                    destinationItem.classList.toggle('active');
+                    
+                    // Get the dropdown associated with this accordion
+                    const dropdown = destinationItem.querySelector('.destination-dropdown');
+                    
+                    // Update aria-hidden attribute
+                    const isExpanded = destinationItem.classList.contains('active');
+                    dropdown.setAttribute('aria-hidden', !isExpanded);
+                    
+                    // Close other open accordions
+                    const siblings = destinationItem.parentElement.querySelectorAll('.destination-item');
+                    siblings.forEach(sibling => {
+                        if (sibling !== destinationItem && sibling.classList.contains('active')) {
+                            sibling.classList.remove('active');
+                            sibling.querySelector('.destination-dropdown').setAttribute('aria-hidden', 'true');
+                        }
+                    });
+                });
+            });
+        });
+
+        // Side menu functionality 
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuButton = document.querySelector('.menu-button-wrapper');
+            const sidebarNav = document.querySelector('.sidebar-nav');
+            const overlay = document.querySelector('.overlay');
+            
+            // Function to open sidebar
+            function openSidebar() {
+                sidebarNav.classList.add('active');
+                overlay.classList.add('active');
+                document.body.classList.add('sidebar-open');
+            }
+
+            // Function to close sidebar
+            function closeSidebar() {
+                sidebarNav.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.classList.remove('sidebar-open');
+            }
+
+            // Event listeners
+            menuButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (sidebarNav.classList.contains('active')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            });
+
+            // Close sidebar when clicking overlay
+            overlay.addEventListener('click', closeSidebar);
+
+            // Close sidebar when pressing Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && sidebarNav.classList.contains('active')) {
+                    closeSidebar();
+                }
+            });
+
+            // Prevent clicks inside sidebar from closing it
+            sidebarNav.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+
+            // Get the grid elements
+            const downGrid = document.querySelector('.grid-animate-down');
+            const upGrid = document.querySelector('.grid-animate-up');
+
+            // Remove and re-add the animation classes to trigger them
+            if (downGrid) {
+                downGrid.classList.remove('grid-animate-down');
+                requestAnimationFrame(() => {
+                    downGrid.classList.add('grid-animate-down');
+                });
+            }
+
+            if (upGrid) {
+                upGrid.classList.remove('grid-animate-up');
+                requestAnimationFrame(() => {
+                    upGrid.classList.add('grid-animate-up');
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
