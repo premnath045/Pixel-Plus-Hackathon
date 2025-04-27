@@ -2,9 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" href="https://www.kayak.com/favicon.ico" sizes="any">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KAYAK - Compare flights, hotels, and car rentals</title>
+  <title>Search Flights, Hotels & Rental Cars | KAYAK</title>
   <!-- <link rel="stylesheet" href="styles.css"> -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <style>
 @import url('https://fonts.cdnfonts.com/css/tt-hoves-pro-trial');
     /* root variables */
@@ -71,11 +74,56 @@
     }
 }
 
+@keyframes pop-1 {
+    from {
+        transform: translateX(0px);
+    }
+    to {
+        transform: translateX(4px);
+    }
+}
+
+@keyframes pop-2 {
+    from {
+        transform: translateX(0px);
+    }
+    to {
+        transform: translateX(8px);
+    }
+}
+
+@keyframes pop-3 {
+    from {
+        transform: translateX(0px);
+    }
+    to {
+        transform: translateX(12px);
+    }
+}
+
+@keyframes pop-4 {
+    from {
+        transform: translateX(0px);
+    }
+    to {
+        transform: translateX(16px);
+    }
+}
+
+@keyframes pop-5 {
+    from {
+        transform: translateX(0px);
+    }
+    to {
+        transform: translateX(20px);
+    }
+}
+
   
-  .kayak-desktop {
-    background-color: #fff;
-    width: 100%;
-  }
+.kayak-desktop {
+background-color: #fff;
+width: 100%;
+}
 
 
 /* Sidebar navigation container */
@@ -89,7 +137,8 @@
     z-index: 10000;
     overflow-y: auto;
     transition: left 0.3s ease;
-    padding-top: 80px;
+    padding-top: 80px !important;
+    padding: 0px 15px;
 }
 
 .sidebar-nav.active {
@@ -127,7 +176,15 @@ body.sidebar-open {
     padding: 2px 0;
     border-radius: 4px;
     cursor: pointer;
-    width: 90%;
+    width: 100%;
+  }
+
+  .menu-item.active-item{
+    background: #e6ebef;
+  }
+
+  .menu-item:hover {
+    background: #e6ebef;
   }
 
   .icon-container {
@@ -610,6 +667,7 @@ body.sidebar-open {
     justify-content: center;
     height: 100%;
     flex: 1;
+    gap: 20px;
   }
   
   .origin-input-wrapper {
@@ -619,7 +677,7 @@ body.sidebar-open {
     padding-left: 12px;
     flex-direction: row;
     align-items: stretch;
-    justify-content: center;
+    justify-content: flex-start;
     width: 268px;
   }
   
@@ -627,7 +685,8 @@ body.sidebar-open {
     border-radius: 4px;
     background-color: #f0f3f5;
     border: 1px solid #d9e2e8;
-    display: flex;
+    /* display: flex; */
+    display: none;
     margin-top: auto;
     margin-bottom: auto;
     margin-right: 8px;
@@ -636,6 +695,14 @@ body.sidebar-open {
     gap: 4px;
     overflow: hidden;
     justify-content: flex-start;
+  }
+
+  .location-tag.has-location {
+    display: flex !important;
+  }
+
+  .checkbox-input {
+    cursor: pointer;
   }
   
   .location-text {
@@ -684,7 +751,7 @@ body.sidebar-open {
     padding-left: 12px;
     flex-direction: row;
     align-items: stretch;
-    justify-content: center;
+    justify-content: flex-start;
     width: 268px;
   }
   
@@ -1699,6 +1766,171 @@ body.sidebar-open {
     width: 100%;
     flex: 1;
   }
+
+  /* stat section css */
+    .stats-section {
+        padding: 48px 0;
+        background-color: #fff;
+        width: 100%;
+    }
+
+    .stats-container {
+        max-width: 1340px;
+        margin: 0 auto;
+        padding: 0 30px;
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .stat-card {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 416px;
+        min-width: 248px;
+        border: 1px solid #d9e2e8;
+        border-radius: 32px;
+        background-color: #fff;
+        color: #192024;
+        padding: 32px;
+    }
+
+    .airline-logos {
+        min-height: 46px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 32px;
+    }
+
+    .airline-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background-color: #f0f3f5;
+        border-radius: 99px;
+        overflow: hidden;
+        object-fit: contain;
+        padding: 5px;
+        border: 1px solid #d9e2e8;
+        margin-right: -8px;
+    }
+
+    img.airline-logo:nth-of-type(1){
+        animation-name: pop-1, pop-1;
+        animation-direction: normal, reverse;
+        animation-duration: .8s, .5s;
+        animation-delay: 0s, .8s;
+        animation-timing-function: cubic-bezier(0.71,0,0.39,1);
+    }
+
+    img.airline-logo:nth-of-type(2){
+        animation-name: pop-2, pop-2;
+        animation-direction: normal, reverse;
+        animation-duration: .8s, .5s;
+        animation-delay: 0s, .8s;
+        animation-timing-function: cubic-bezier(0.71,0,0.39,1);
+    }
+
+    img.airline-logo:nth-of-type(3){
+        animation-name: pop-3, pop-3;
+        animation-direction: normal, reverse;
+        animation-duration: .8s, .5s;
+        animation-delay: 0s, .8s;
+        animation-timing-function: cubic-bezier(0.71,0,0.39,1);
+    }
+
+    img.airline-logo:nth-of-type(4){
+        animation-name: pop-4, pop-4;
+        animation-direction: normal, reverse;
+        animation-duration: .8s, .5s;
+        animation-delay: 0s, .8s;
+        animation-timing-function: cubic-bezier(0.71,0,0.39,1);
+    }
+
+    img.airline-logo:nth-of-type(5){
+        animation-name: pop-5, pop-5;
+        animation-direction: normal, reverse;
+        animation-duration: .8s, .5s;
+        animation-delay: 0s, .8s;
+        animation-timing-function: cubic-bezier(0.71,0,0.39,1);
+    }
+
+    .user-avatars {
+        min-height: 46px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 32px;
+    }
+
+    .user-avatar {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        margin-right: -8px;
+    }
+
+    img.user-avatar:nth-of-type(1){
+        animation-name: pop-1, pop-1;
+        animation-direction: normal, reverse;
+        animation-duration: .8s, .5s;
+        animation-delay: 0s, .8s;
+        animation-timing-function: cubic-bezier(0.71,0,0.39,1);
+    }
+
+    img.user-avatar:nth-of-type(2){
+        animation-name: pop-2, pop-2;
+        animation-direction: normal, reverse;
+        animation-duration: .8s, .5s;
+        animation-delay: 0s, .8s;
+        animation-timing-function: cubic-bezier(0.71,0,0.39,1);
+    }
+
+    img.user-avatar:nth-of-type(3){
+        animation-name: pop-3, pop-3;
+        animation-direction: normal, reverse;
+        animation-duration: .8s, .5s;
+        animation-delay: 0s, .8s;
+        animation-timing-function: cubic-bezier(0.71,0,0.39,1);
+    }
+
+    .star-rating {
+        min-height: 46px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 32px;
+    }
+
+    .star {
+        color: #FF690F;
+        font-size: 30px;
+    }
+
+    .stat-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #192024;
+        margin: 0 0 8px 0;
+    }
+
+    .stat-description {
+        font-size: 16px;
+        color: #647582;
+        margin: 0;
+    }
+
+    @media (max-width: 768px) {
+        .stats-container {
+            flex-direction: column;
+        }
+
+        .stat-card {
+            width: 100%;
+        }
+    }
+
   
   /* Travel Planning Section Styles */
   .travel-planning-section {
@@ -2249,6 +2481,110 @@ font-family: "TT Hoves Variable", sans-serif;
 font-size: 24px;
 color: #8796a1;
 } 
+
+/* search dropdown */
+.location-dropdowns-container {
+  position: absolute;
+  width: 100%;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.location-dropdown {
+  position: absolute;
+  background: white;
+  border-radius: 8px;
+  margin-top: 4px;
+  max-height: 500px;
+  min-width: 400px;
+  max-width: 600px;
+  overflow-y: auto;
+  pointer-events: auto;
+  box-sizing: content-box;
+  box-shadow: 0 10px 20px rgba(25, 32, 36, 0.1), 0 3px 6px rgba(25, 32, 36, 0.04), 0 -3px 6px rgba(25, 32, 36, 0.04);
+  display: none;
+}
+
+.dropdown-header {
+  border-bottom: 1px solid #d9e2e8;
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  justify-content: space-between;
+}
+
+.dropdown-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #192024;
+  margin: 0;
+}
+
+.dropdown-subtitle {
+  font-size: 12px;
+  color: #647582;
+}
+
+.dropdown-items {
+  padding: 8px 0;
+}
+
+.filter-dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.filter-dropdown-item:hover {
+  background-color: #f0f3f5;
+}
+
+.filter-dropdown-item.selected {
+  background-color: #f0f3f5;
+}
+
+.airport-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  margin-right: 12px;
+  object-fit: cover;
+}
+
+.airport-info {
+  flex: 1;
+}
+
+.airport-name {
+  font-size: 14px;
+  color: #192024;
+  margin-bottom: 4px;
+}
+
+.airport-code {
+  font-size: 12px;
+  color: #647582;
+  margin-bottom: 2px;
+}
+
+.airport-type {
+  font-size: 12px;
+  color: #647582;
+}
+
+.selection-indicator {
+  color: #ff690f;
+  font-weight: bold;
+  margin-left: 12px;
+}
+
+.origin-input-wrapper,
+.destination-input-wrapper {
+    position: relative;
+}
 </style>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
@@ -2566,7 +2902,7 @@ color: #8796a1;
                       </li>
                       <li class="travel-option-item">
                         <a href="#" class="travel-option-link">
-                          <img src="https://cdn.builder.io/api/v1/image/assets/598c1e6744fc4bc4b5b6b31827fc5a02/a71cb153237c8281f4be900d9829aab84021126c?placeholderIfAbsent=true" alt="Stays" class="travel-option-icon">
+                          <img src="https://i.ibb.co/ycgd9vm5/stay-icon.webp" alt="Stays" class="travel-option-icon">
                         </a>
                         <span class="travel-option-text">Stays</span>
                       </li>
@@ -2689,9 +3025,179 @@ color: #8796a1;
                     </div>
                 </div>
             </div>
-          </div>
+
+          </div>  
         </div>
       </section>
+
+       <!-- location dropdown -->
+       <div class="location-dropdowns-container">
+            <!-- Origin dropdown -->
+            <div class="location-dropdown origin-dropdown" style="display: none;">
+              <div class="dropdown-header">
+                  <div>
+                    <h3 class="dropdown-title">Add nearby airports</h3>
+                    <span class="dropdown-subtitle">Within 110km of TRZ</span>
+                  </div>
+                  <input type="checkbox" class="checkbox-input selection-indicator" id="from-checkbox-0"></input>
+              </div>
+
+              <div class="dropdown-items">
+                <div class="filter-dropdown-item">
+                  <img src="https://content.r9cdn.net/rimg/dimg/50/0a/97f4f865-city-16703-16515be5f6a.jpg?width=128&height=128&xhint=2639&yhint=1702&outputtype=JPEG&crop=true" alt="Airport" class="airport-image">
+                  <div class="airport-info">
+                      <div class="airport-name">Chennai, Tamil Nadu, India</div>
+                      <div class="airport-code">MAA</div>
+                      <div class="airport-type">Chennai</div>
+                  </div>
+                  <input type="checkbox" class="checkbox-input selection-indicator" id="from-checkbox-1"></input>
+                </div>
+
+                <div class="filter-dropdown-item">
+                  <img src="https://content.r9cdn.net/rimg/dimg/50/0a/97f4f865-city-16703-16515be5f6a.jpg?width=128&height=128&xhint=2639&yhint=1702&outputtype=JPEG&crop=true" alt="Airport" class="airport-image">
+                  <div class="airport-info">
+                      <div class="airport-name">Bengaluru, Karnataka, India</div>
+                      <div class="airport-code">BLR</div>
+                      <div class="airport-type">Bengaluru Intl</div>
+                  </div>
+                  <input type="checkbox" class="checkbox-input selection-indicator" id="from-checkbox-2"></input>
+                </div> 
+
+                <div class="filter-dropdown-item">
+                  <img src="https://content.r9cdn.net/rimg/dimg/50/0a/97f4f865-city-16703-16515be5f6a.jpg?width=128&height=128&xhint=2639&yhint=1702&outputtype=JPEG&crop=true" alt="Airport" class="airport-image">
+                  <div class="airport-info">
+                      <div class="airport-name">Tiruchirappalli, Tamil Nadu, India</div>
+                      <div class="airport-code">TRZ</div>
+                      <div class="airport-type">Civil</div>
+                  </div>
+                  <input type="checkbox" class="checkbox-input selection-indicator" id="from-checkbox-3"></input>
+                </div>  
+
+                <div class="filter-dropdown-item">
+                  <img src="https://content.r9cdn.net/rimg/dimg/99/bf/9500b286-lm-4440-169fe2cc144.jpg?width=128&height=128&xhint=1935&yhint=1502&outputtype=JPEG&crop=true" alt="Airport" class="airport-image">
+                  <div class="airport-info">
+                      <div class="airport-name">Singapore, Singapore</div>
+                      <div class="airport-code">SIN</div>
+                      <div class="airport-type">Changi</div>
+                  </div>
+                  <input type="checkbox" class="checkbox-input selection-indicator" id="from-checkbox-4"></input>
+                </div>  
+
+                <div class="filter-dropdown-item">
+                  <img src="https://content.r9cdn.net/rimg/dimg/6d/77/0cc45283-city-32821-176ddb032b7.jpg?width=128&height=128&xhint=1769&yhint=1931&outputtype=JPEG&crop=true" alt="Airport" class="airport-image">
+                  <div class="airport-info">
+                      <div class="airport-name">New Delhi, National Capital, India</div>
+                      <div class="airport-code">DEL</div>
+                      <div class="airport-type">Indira Gandhi Intl</div>
+                  </div>
+                  <input type="checkbox" class="checkbox-input selection-indicator" id="from-checkbox-5"></input>
+                </div>  
+              </div>
+            </div>
+        
+            <!-- Destination dropdown -->
+            <div class="location-dropdown destination-dropdown" style="display: none;">
+              <div class="dropdown-header">
+                <div>
+                  <h3 class="dropdown-title">Add nearby airports</h3>
+                  <span class="dropdown-subtitle">Within 110km of TRZ</span>
+                </div>
+                <input type="checkbox" class="checkbox-input selection-indicator" id="to-checkbox-0"></input>
+              </div>
+
+              <div class="dropdown-items">
+                <div class="filter-dropdown-item">
+                  <img src="https://content.r9cdn.net/rimg/dimg/50/0a/97f4f865-city-16703-16515be5f6a.jpg?width=128&height=128&xhint=2639&yhint=1702&outputtype=JPEG&crop=true" alt="Airport" class="airport-image">
+                  <div class="airport-info">
+                      <div class="airport-name">Chennai, Tamil Nadu, India</div>
+                      <div class="airport-code">MAA</div>
+                      <div class="airport-type">Chennai</div>
+                  </div>
+                  <input type="checkbox" class="checkbox-input selection-indicator" id="to-checkbox-1"></input>
+                </div>
+
+                <div class="filter-dropdown-item">
+                  <img src="https://content.r9cdn.net/rimg/dimg/50/0a/97f4f865-city-16703-16515be5f6a.jpg?width=128&height=128&xhint=2639&yhint=1702&outputtype=JPEG&crop=true" alt="Airport" class="airport-image">
+                  <div class="airport-info">
+                      <div class="airport-name">Bengaluru, Karnataka, India</div>
+                      <div class="airport-code">BLR</div>
+                      <div class="airport-type">Bengaluru Intl</div>
+                  </div>
+                  <input type="checkbox" class="checkbox-input selection-indicator" id="to-checkbox-2"></input>
+                </div> 
+
+                <div class="filter-dropdown-item">
+                  <img src="https://content.r9cdn.net/rimg/dimg/50/0a/97f4f865-city-16703-16515be5f6a.jpg?width=128&height=128&xhint=2639&yhint=1702&outputtype=JPEG&crop=true" alt="Airport" class="airport-image">
+                  <div class="airport-info">
+                      <div class="airport-name">Tiruchirappalli, Tamil Nadu, India</div>
+                      <div class="airport-code">TRZ</div>
+                      <div class="airport-type">Civil</div>
+                  </div>
+                  <input type="checkbox" class="checkbox-input selection-indicator" id="to-checkbox-3"></input>
+                </div>  
+
+                <div class="filter-dropdown-item">
+                  <img src="https://content.r9cdn.net/rimg/dimg/99/bf/9500b286-lm-4440-169fe2cc144.jpg?width=128&height=128&xhint=1935&yhint=1502&outputtype=JPEG&crop=true" alt="Airport" class="airport-image">
+                  <div class="airport-info">
+                      <div class="airport-name">Singapore, Singapore</div>
+                      <div class="airport-code">SIN</div>
+                      <div class="airport-type">Changi</div>
+                  </div>
+                  <input type="checkbox" class="checkbox-input selection-indicator" id="to-checkbox-4"></input>
+                </div>  
+
+                <div class="filter-dropdown-item">
+                  <img src="https://content.r9cdn.net/rimg/dimg/6d/77/0cc45283-city-32821-176ddb032b7.jpg?width=128&height=128&xhint=1769&yhint=1931&outputtype=JPEG&crop=true" alt="Airport" class="airport-image">
+                  <div class="airport-info">
+                      <div class="airport-name">New Delhi, National Capital, India</div>
+                      <div class="airport-code">DEL</div>
+                      <div class="airport-type">Indira Gandhi Intl</div>
+                  </div>
+                  <input type="checkbox" class="checkbox-input selection-indicator" id="to-checkbox-5"></input>
+                </div> 
+              </div>
+            </div>
+        </div>
+
+
+      <!-- stat blocks -->
+        <section class="stats-section">
+            <div class="stats-container">
+            <div class="stat-card">
+                <div class="airline-logos">
+                <img src="https://content.r9cdn.net/rimg/provider-logos/airlines/v/B6.png?crop=false&width=108&height=92&fallback=default1.png" alt="JetBlue" class="airline-logo">
+                <img src="https://content.r9cdn.net/rimg/provider-logos/airlines/v/EK.png?crop=false&width=108&height=92&fallback=default1.png" alt="Emirates" class="airline-logo">
+                <img src="https://content.r9cdn.net/rimg/provider-logos/airlines/v/QR.png?crop=false&width=108&height=92&fallback=default1.png" alt="Qatar Airways" class="airline-logo">
+                <img src="https://content.r9cdn.net/rimg/provider-logos/airlines/v/AA.png?crop=false&width=108&height=92&fallback=default2.png" alt="American Airlines" class="airline-logo">
+                </div>
+                <h3 class="stat-title">Save when you compare</h3>
+                <p class="stat-description">More deals. More sites. One search</p>
+            </div>
+        
+            <div class="stat-card">
+                <div class="user-avatars">
+                <img src="https://randomuser.me/api/portraits/women/42.jpg" alt="User" class="user-avatar">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="user-avatar">
+                <img src="https://randomuser.me/api/portraits/women/22.jpg" alt="User" class="user-avatar">
+                </div>
+                <h3 class="stat-title" id="search-count">41,000,000+</h3>
+                <p class="stat-description">searches this week</p>
+            </div>
+        
+            <div class="stat-card">
+                <div class="star-rating">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                </div>
+                <h3 class="stat-title">Travelers love us</h3>
+                <p class="stat-description">1M+ ratings on our app</p>
+            </div>
+            </div>
+        </section>
+
 
       <!-- Recent Searches Section -->
       <section class="recent-searches-section">
@@ -4131,6 +4637,41 @@ color: #8796a1;
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
+            // Counter animation function
+            function animateCounter(element, start, end, duration) {
+                let current = start;
+                const range = end - start;
+                const increment = range / (duration / 16); // 16ms is roughly 60fps
+                const startTime = performance.now();
+                
+                function updateCounter(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    
+                    if (elapsed < duration) {
+                        current += increment;
+                        // Format number with commas
+                        const formattedNumber = Math.floor(current).toLocaleString();
+                        element.textContent = formattedNumber + '+';
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        // Ensure we end up with exactly the target number
+                        element.textContent = Math.floor(end).toLocaleString() + '+';
+                    }
+                }
+                
+                requestAnimationFrame(updateCounter);
+            }
+
+            // Initialize counter animation
+            const searchCount = document.getElementById('search-count');
+            if (searchCount) {
+                // Delay the animation start slightly to ensure it's visible
+                setTimeout(() => {
+                    animateCounter(searchCount, 0, 41000000, 2000); // 2000ms = 2 seconds duration
+                }, 500); // 500ms delay before starting
+            }
+
             
             // Initialize deals swiper section
             const swiper = new Swiper('.deals-swiper', {
@@ -4313,6 +4854,82 @@ color: #8796a1;
                     upGrid.classList.add('grid-animate-up');
                 });
             }
+        });
+    </script>
+
+    <script>
+        // location dropdown
+        $(document).ready(function() {
+          // Handle input field click
+          $('.location-input').on('click', function(e) {
+              e.stopPropagation();
+              const $this = $(this);
+              const isOrigin = $this.closest('.origin-input-wrapper').length > 0;
+              const $dropdown = isOrigin ? $('.origin-dropdown') : $('.destination-dropdown');
+              
+              // Hide all dropdowns first
+              $('.location-dropdown').hide();
+              
+              // Position and show the dropdown
+              const inputRect = this.getBoundingClientRect();
+              $dropdown.css({
+                  top: '-60'+ 'px',
+                  left: inputRect.left + 'px',
+                  display: 'block'
+              });
+          });
+
+          // Close dropdown when clicking outside
+          $(document).on('click', function(e) {
+              if (!$(e.target).closest('.origin-input-wrapper, .destination-input-wrapper, .location-dropdown').length) {
+                  $('.location-dropdown').hide();
+              }
+          });
+
+          // Handle dropdown item selection
+          $('.filter-dropdown-item').on('click', function(e) {
+              e.preventDefault();
+              const $item = $(this);
+              const $dropdown = $item.closest('.location-dropdown');
+              const isOrigin = $dropdown.hasClass('origin-dropdown');
+              const $wrapper = isOrigin ? 
+                  $('.origin-input-wrapper') : 
+                  $('.destination-input-wrapper');
+              
+              const airportName = $item.find('.airport-name').text();
+              const airportCode = $item.find('.airport-code').text();
+              
+              // Update location tag
+              $wrapper.find('.location-tag .location-text').text(`${airportName.split(',')[0]} (${airportCode})`);
+              
+              // Check the checkbox
+              $item.find('.checkbox-input').prop('checked', true);
+              
+              // Uncheck other checkboxes in the same dropdown
+              $dropdown.find('.checkbox-input').not($item.find('.checkbox-input')).prop('checked', false);
+              
+              // Show location tag and hide input
+              $wrapper.find('.location-tag').addClass('has-location');
+              $wrapper.find('.location-input').hide();
+              
+              // Hide dropdown
+              $dropdown.hide();
+          });
+
+          // Handle remove location button click
+          $('.remove-location-button').on('click', function(e) {
+              e.stopPropagation();
+              const $wrapper = $(this).closest('.origin-input-wrapper, .destination-input-wrapper');
+              const isOrigin = $wrapper.hasClass('origin-input-wrapper');
+              const $dropdown = isOrigin ? $('.origin-dropdown') : $('.destination-dropdown');
+              
+              // Hide location tag and show input
+              $wrapper.find('.location-tag').removeClass('has-location');
+              $wrapper.find('.location-input').show().val('');
+              
+              // Uncheck all checkboxes in the corresponding dropdown
+              $dropdown.find('.checkbox-input').prop('checked', false);
+          });
         });
     </script>
 
